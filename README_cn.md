@@ -51,6 +51,8 @@ git clone ...
 make init
 ```
 *Note:*`必须生成并输入 SESSION_SECRET 值供 session 功能正常使用`
+
+**注意：必须在 app/frontend/.env 里设置 SESSION_SECRET 为任意字符串，env文件必不提供**
 ### 下载 Go 依赖
 ```
 make tidy
@@ -61,6 +63,17 @@ make tidy
 make env-start
 ```
 if you want to stop their docker application,you can run `make env-stop`.
+
+### 启动所有服务
+```
+./scripts/run_all.sh
+```
+### 关闭所有服务
+```
+pkill main
+pkill handler
+```
+
 
 ### 启动某服务
 该命令必须执行一个服务
