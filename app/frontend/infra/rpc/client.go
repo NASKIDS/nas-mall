@@ -18,6 +18,13 @@ import (
 	"context"
 	"sync"
 
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/circuitbreak"
+	"github.com/cloudwego/kitex/pkg/fallback"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	prometheus "github.com/kitex-contrib/monitor-prometheus"
+	dns "github.com/kitex-contrib/resolver-dns"
+
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
 	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
@@ -28,11 +35,6 @@ import (
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user/userservice"
-	"github.com/cloudwego/kitex/client"
-	"github.com/cloudwego/kitex/pkg/circuitbreak"
-	"github.com/cloudwego/kitex/pkg/fallback"
-	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	prometheus "github.com/kitex-contrib/monitor-prometheus"
 )
 
 var (
@@ -97,7 +99,7 @@ func initProductClient() {
 }
 
 func initUserClient() {
-	UserClient, err = userservice.NewClient("user", commonSuite)
+	UserClient, err = userservice.NewClient("user", client.WithResolver(dns.NewDNSResolver()))
 	frontendutils.MustHandleError(err)
 }
 
