@@ -25,6 +25,7 @@ func ValidateNext(next string) bool {
 	if err != nil {
 		return false
 	}
+
 	if InArray(urlObj.Host, validHost) {
 		return true
 	}

@@ -18,9 +18,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
 )
 
 func GlobalAuth() app.HandlerFunc {
@@ -41,8 +42,7 @@ func Auth() app.HandlerFunc {
 		session := sessions.Default(c)
 		userId := session.Get("user_id")
 		if userId == nil {
-			byteRef := c.GetHeader("Referer")
-			ref := string(byteRef)
+			ref := c.URI().String()
 			next := "/sign-in"
 			if ref != "" {
 				if utils.ValidateNext(ref) {

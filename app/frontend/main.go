@@ -84,9 +84,13 @@ func main() {
 	router.GeneratedRegister(h)
 
 	h.GET("sign-in", func(ctx context.Context, c *app.RequestContext) {
+		next := c.Query("next")
+		if next == "" {
+			next = c.Request.Header.Get("Referer")
+		}
 		c.HTML(consts.StatusOK, "sign-in", utils.H{
 			"title": "Sign in",
-			"next":  c.Request.Header.Get("Referer"),
+			"next":  next,
 		})
 	})
 	h.GET("sign-up", func(ctx context.Context, c *app.RequestContext) {
