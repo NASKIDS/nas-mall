@@ -20,11 +20,6 @@ import (
 	"context"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/middlewares/server/recovery"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -41,6 +36,12 @@ import (
 	"github.com/hertz-contrib/sessions/redis"
 	"github.com/joho/godotenv"
 	oteltrace "go.opentelemetry.io/otel/trace"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/middleware"
 )
 
 func main() {
@@ -85,7 +86,7 @@ func main() {
 	h.GET("sign-in", func(ctx context.Context, c *app.RequestContext) {
 		c.HTML(consts.StatusOK, "sign-in", utils.H{
 			"title": "Sign in",
-			"next":  c.Query("next"),
+			"next":  c.Request.Header.Get("Referer"),
 		})
 	})
 	h.GET("sign-up", func(ctx context.Context, c *app.RequestContext) {
