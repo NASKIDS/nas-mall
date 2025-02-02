@@ -24,7 +24,7 @@ var (
 )
 
 func Init() {
-	Nc, err = nats.Connect(nats.DefaultURL)
+	Nc, err = nats.Connect("nats-svc")
 	if err != nil {
 		panic(err)
 	}

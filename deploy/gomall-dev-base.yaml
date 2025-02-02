@@ -1,8 +1,14 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nas-mall
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
+  namespace: nas-mall
 spec:
   selector:
     matchLabels:
@@ -26,21 +32,22 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-paasword
+              name: mysql-password
               key: password
         volumeMounts:
         - mountPath: /docker-entrypoint-initdb.d
           name: initdb
       volumes:
       - name: initdb
-        hostPath: 
-          path: /opt/gomall/db/sql/ini
-          type: Directory
+        configMap:
+          name: mysql-ini
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mysql-svc
+  namespace: nas-mall
 spec:
   selector:
     app: mysql
@@ -53,6 +60,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: consul
+  namespace: nas-mall
 spec:
   selector:
     matchLabels:
@@ -77,6 +85,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: consul-svc
+  namespace: nas-mall
 spec:
   selector:
     app: consul
@@ -88,6 +97,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
+  namespace: nas-mall
 spec:
   selector:
     matchLabels:
@@ -113,6 +123,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: redis-svc
+  namespace: nas-mall
 spec:
   selector:
     app: redis
@@ -124,6 +135,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nats
+  namespace: nas-mall
 spec:
   selector:
     matchLabels:
@@ -149,6 +161,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nats-svc
+  namespace: nas-mall
 spec:
   selector:
     app: nats
@@ -164,6 +177,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jaeger
+  namespace: nas-mall
 spec:
   selector:
     matchLabels:
@@ -190,6 +204,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jaeger-svc
+  namespace: nas-mall
 spec:
   selector:
     app: jaeger
@@ -208,6 +223,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
+  namespace: nas-mall
 spec:
   selector:
     matchLabels:
@@ -230,18 +246,19 @@ spec:
         ports:
         - containerPort: 9090
         volumeMounts:
-        - mountPath: /etc/prometheus/prometheus.yml
+        - mountPath: /etc/prometheus
           name: prom-config
       volumes:
       - name: prom-config
-        hostPath: 
-          path: /opt/gomall/deploy/config/prometheus.yml
-          type: File
+        configMap:
+          name:
+            prom-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: prometheus-svc
+  namespace: nas-mall
 spec:
   selector:
     app: prometheus
@@ -253,7 +270,60 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: mysql-paasword
+  name: mysql-password
+  namespace: nas-mall
 type: Opaque
 data:
   password: cm9vdA==
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-ini
+  namespace: nas-mall
+data:
+  databases.sql: |
+    CREATE DATABASE IF NOT EXISTS `cart`
+    DEFAULT CHARACTER SET = 'utf8mb4';;
+  
+    CREATE DATABASE IF NOT EXISTS `checkout`
+    DEFAULT CHARACTER SET = 'utf8mb4';
+  
+    CREATE DATABASE IF NOT EXISTS `order`
+    DEFAULT CHARACTER SET = 'utf8mb4';
+  
+    CREATE DATABASE IF NOT EXISTS `payment`
+    DEFAULT CHARACTER SET = 'utf8mb4';
+  
+    CREATE DATABASE IF NOT EXISTS `product`
+    DEFAULT CHARACTER SET = 'utf8mb4';
+  
+    CREATE DATABASE IF NOT EXISTS `user`
+    DEFAULT CHARACTER SET = 'utf8mb4';
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prom-config
+  namespace: nas-mall
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    
+    scrape_configs:
+      - job_name: "consul"
+        consul_sd_configs:
+          - server: consul:8500
+            services:
+              - prometheus
+        relabel_configs:
+          - source_labels: [ __meta_consul_tags ]
+            action: replace
+            target_label: service
+            regex: ".*service:(.*?),.*"
+            replacement: "$1"
+    
+          - source_labels: [ __meta_consul_service_id ]
+            target_label: __metrics_path__
+            replacement: /metrics
