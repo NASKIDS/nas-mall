@@ -21,16 +21,18 @@ import (
 	"github.com/joho/godotenv"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/cloudwego/biz-demo/gomall/app/email/biz/consumer"
-	"github.com/cloudwego/biz-demo/gomall/app/email/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/email/infra/mq"
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
-	"github.com/cloudwego/biz-demo/gomall/common/utils"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email/emailservice"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
+
+	"github.com/cloudwego/biz-demo/gomall/app/email/biz/consumer"
+	"github.com/cloudwego/biz-demo/gomall/app/email/conf"
+	"github.com/cloudwego/biz-demo/gomall/app/email/infra/mq"
+	"github.com/cloudwego/biz-demo/gomall/common/mtl"
+	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
+	"github.com/cloudwego/biz-demo/gomall/common/utils"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email/emailservice"
 )
 
 var serviceName = conf.GetConf().Kitex.Service
@@ -69,6 +71,7 @@ func kitexInit() (opts []server.Option) {
 		panic(err)
 	}
 	opts = append(opts, server.WithServiceAddr(addr))
+	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
 
 	_ = provider.NewOpenTelemetryProvider(
 		provider.WithSdkTracerProvider(mtl.TracerProvider),

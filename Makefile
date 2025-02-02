@@ -38,25 +38,28 @@ watch-frontend:
 
 .PHONY: tidy
 tidy: ## run `go mod tidy` for all go module
-	@scripts/tidy.sh
+	scripts/tidy.sh
 
 .PHONY: lint
 lint: ## run `gofmt` for all go module
-	@gofmt -l -w app
-	@gofumpt -l -w  app
+	gofmt -l -w app
+	gofumpt -l -w  app
 
 .PHONY: vet
 vet: ## run `go vet` for all go module
-	@scripts/vet.sh
+	scripts/vet.sh
 
 .PHONY: lint-fix
 lint-fix: ## run `golangci-lint` for all go module
-	@scripts/fix.sh
+	scripts/fix.sh
 
 .PHONY: run
 run: ## run {svc} server. example: make run svc=product
-	@scripts/run.sh ${svc}
+	scripts/run.sh ${svc}
 
+.PHONY: test
+test:
+# TODO   go test
 ##@ Development Env
 
 .PHONY: env-start
@@ -68,7 +71,7 @@ env-stop: ## stop all docker
 	@docker-compose down
 
 .PHONY: clean
-clean: ## clern up all the tmp files
+clean: ## clean up all the tmp files
 	@rm -r app/**/log/ app/**/tmp/
 
 ##@ Open Browser
@@ -89,3 +92,28 @@ open-jaeger: ## open `jaeger ui` in the default browser
 open-prometheus: ## open `prometheus ui` in the default browser
 	@open "http://localhost:9090"
 
+##@ Build Images
+
+.PHONY: build-frontend
+build-frontend:
+	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
+
+.PHONY: build-svc
+build-svc: tidy vet lint-fix test
+	docker build -f ./deploy/Dockerfile.svc -t ${svc}:${v} --build-arg SVC=${svc} .
+
+.PHONY: build-all
+build-all: tidy vet lint-fix test
+	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
+	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
+	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
+	docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
+	docker build -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
+	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
+	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
+	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+
+.PHONY: deploy
+deploy:
+	kubectl apply --context=${context} -f deploy/gomall-dev-base.yaml
+	kubectl apply --context=${context} -f deploy/gomall-dev-app.yaml
