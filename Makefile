@@ -95,15 +95,15 @@ open-prometheus: ## open `prometheus ui` in the default browser
 ##@ Build Images
 
 .PHONY: build-frontend
-build-frontend:
+build-frontend: ## build the frontend service image
 	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
 
 .PHONY: build-svc
-build-svc: tidy vet lint-fix test
+build-svc: tidy vet lint-fix test ## build a custom service image
 	docker build -f ./deploy/Dockerfile.svc -t ${svc}:${v} --build-arg SVC=${svc} .
 
 .PHONY: build-all
-build-all: tidy vet lint-fix test
+build-all: tidy vet lint-fix test ## build all service image
 	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
 	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
 	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
@@ -114,6 +114,6 @@ build-all: tidy vet lint-fix test
 	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
 
 .PHONY: deploy
-deploy:
+deploy: ## deploy manifests to kubernetes
 	kubectl apply --context=${context} -f deploy/gomall-dev-base.yaml
 	kubectl apply --context=${context} -f deploy/gomall-dev-app.yaml
