@@ -74,6 +74,20 @@ pkill main
 pkill handler
 ```
 
+### 制作服务镜像（结算服务为例）
+```
+v=vx.y.z svc=checkout make build-svc
+```
+
+### 制作全部镜像
+```
+v=vx.y.z make build-all
+```
+
+### 部署（以部署到docker desktop为例）
+```
+context=docker-desktop make deploy
+```
 
 ### 启动某服务
 该命令必须执行一个服务
