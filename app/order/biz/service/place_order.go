@@ -18,11 +18,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudwego/biz-demo/gomall/app/order/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/order/biz/model"
-	order "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/app/order/biz/dal/mysql"
+	"github.com/naskids/nas-mall/app/order/biz/model"
+	order "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
 )
 
 type PlaceOrderService struct {

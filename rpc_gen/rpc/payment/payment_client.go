@@ -2,9 +2,10 @@ package payment
 
 import (
 	"context"
-	payment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment/paymentservice"
+	payment "github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment/paymentservice"
+
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 )

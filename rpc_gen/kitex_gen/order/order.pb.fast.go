@@ -4,8 +4,8 @@ package order
 
 import (
 	fmt "fmt"
-	cart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
 	fastpb "github.com/cloudwego/fastpb"
+	cart "github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart"
 )
 
 var (

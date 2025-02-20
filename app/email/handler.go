@@ -17,8 +17,8 @@ package main
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/email/biz/service"
-	email "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
+	"github.com/naskids/nas-mall/app/email/biz/service"
+	email "github.com/naskids/nas-mall/rpc_gen/kitex_gen/email"
 )
 
 // EmailServiceImpl implements the last service interface defined in the IDL.

@@ -21,7 +21,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
+	"github.com/naskids/nas-mall/app/frontend/utils"
 )
 
 func GlobalAuth() app.HandlerFunc {

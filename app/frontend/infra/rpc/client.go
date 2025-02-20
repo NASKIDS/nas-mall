@@ -18,21 +18,22 @@ import (
 	"context"
 	"sync"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart/cartservice"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout/checkoutservice"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user/userservice"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/circuitbreak"
 	"github.com/cloudwego/kitex/pkg/fallback"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	prometheus "github.com/kitex-contrib/monitor-prometheus"
+
+	"github.com/naskids/nas-mall/app/frontend/conf"
+	"github.com/naskids/nas-mall/app/frontend/infra/mtl"
+	frontendutils "github.com/naskids/nas-mall/app/frontend/utils"
+	"github.com/naskids/nas-mall/common/clientsuite"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart/cartservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/checkout/checkoutservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product/productcatalogservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/user/userservice"
 )
 
 var (

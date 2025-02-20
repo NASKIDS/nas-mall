@@ -17,8 +17,6 @@ package email
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/email/infra/mq"
-	"github.com/cloudwego/biz-demo/gomall/app/email/infra/notify"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/server"
 	"github.com/nats-io/nats.go"
@@ -26,7 +24,10 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
+	"github.com/naskids/nas-mall/app/email/infra/mq"
+	"github.com/naskids/nas-mall/app/email/infra/notify"
+
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/email"
 )
 
 func ConsumerInit() {

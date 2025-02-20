@@ -15,8 +15,8 @@
 package dal
 
 import (
-	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/redis"
+	"github.com/naskids/nas-mall/app/product/biz/dal/mysql"
+	"github.com/naskids/nas-mall/app/product/biz/dal/redis"
 )
 
 func Init() {

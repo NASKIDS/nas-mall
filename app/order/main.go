@@ -18,17 +18,19 @@ import (
 	"net"
 	"strings"
 
-	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/cloudwego/biz-demo/gomall/app/order/biz/dal"
-	"github.com/cloudwego/biz-demo/gomall/app/order/conf"
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
-	"github.com/cloudwego/biz-demo/gomall/common/utils"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
+	"github.com/naskids/nas-mall/common/serversuite"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/server"
 	"github.com/joho/godotenv"
+
+	"github.com/naskids/nas-mall/app/order/biz/dal"
+	"github.com/naskids/nas-mall/app/order/conf"
+	"github.com/naskids/nas-mall/common/mtl"
+	"github.com/naskids/nas-mall/common/utils"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
 )
 
 var serviceName = conf.GetConf().Kitex.Service

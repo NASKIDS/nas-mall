@@ -1,16 +1,14 @@
-module github.com/cloudwego/biz-demo/gomall/app/frontend
+module github.com/naskids/nas-mall/app/frontend
 
 go 1.21
 
 replace (
 	github.com/apache/thrift => github.com/apache/thrift v0.13.0
-	github.com/cloudwego/biz-demo/gomall/common => ../../common
-	github.com/cloudwego/biz-demo/gomall/rpc_gen => ../../rpc_gen
+	github.com/naskids/nas-mall/common => ../../common
+	github.com/naskids/nas-mall/rpc_gen => ../../rpc_gen
 )
 
 require (
-	github.com/cloudwego/biz-demo/gomall/common v0.0.0-00010101000000-000000000000
-	github.com/cloudwego/biz-demo/gomall/rpc_gen v0.0.0-00010101000000-000000000000
 	github.com/cloudwego/hertz v0.7.3
 	github.com/cloudwego/kitex v0.11.3
 	github.com/hashicorp/consul/api v1.26.1
@@ -27,6 +25,8 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kitex-contrib/monitor-prometheus v0.2.0
 	github.com/kr/pretty v0.3.1
+	github.com/naskids/nas-mall/common v0.0.0-00010101000000-000000000000
+	github.com/naskids/nas-mall/rpc_gen v0.0.0-00010101000000-000000000000
 	github.com/prometheus/client_golang v1.19.0
 	github.com/redis/go-redis/v9 v9.3.1
 	go.opentelemetry.io/otel v1.25.0
@@ -86,7 +86,6 @@ require (
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
-	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/serf v0.10.1 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect

@@ -17,13 +17,14 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/checkout"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpccheckout "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
-	rpcpayment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+
+	"github.com/naskids/nas-mall/app/frontend/hertz_gen/frontend/checkout"
+	"github.com/naskids/nas-mall/app/frontend/infra/rpc"
+	frontendutils "github.com/naskids/nas-mall/app/frontend/utils"
+	rpccheckout "github.com/naskids/nas-mall/rpc_gen/kitex_gen/checkout"
+	rpcpayment "github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
 )
 
 type CheckoutWaitingService struct {

@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/app/order/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/order/conf"
+	"github.com/naskids/nas-mall/app/order/biz/model"
+	"github.com/naskids/nas-mall/app/order/conf"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

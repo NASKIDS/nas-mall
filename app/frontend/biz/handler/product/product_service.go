@@ -17,11 +17,12 @@ package product
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/service"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
-	product "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+
+	"github.com/naskids/nas-mall/app/frontend/biz/service"
+	"github.com/naskids/nas-mall/app/frontend/biz/utils"
+	product "github.com/naskids/nas-mall/app/frontend/hertz_gen/frontend/product"
 )
 
 // GetProduct .
@@ -43,9 +44,9 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 	c.HTML(consts.StatusOK, "product", utils.WarpResponse(ctx, c, resp))
 }
 
-// SearchProducs .
+// SearchProducts .
 // @router /search [GET]
-func SearchProducs(ctx context.Context, c *app.RequestContext) {
+func SearchProducts(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.SearchProductsReq
 	err = c.BindAndValidate(&req)
@@ -54,7 +55,7 @@ func SearchProducs(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := service.NewSearchProducsService(ctx, c).Run(&req)
+	resp, err := service.NewSearchProductsService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return

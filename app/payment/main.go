@@ -18,17 +18,18 @@ import (
 	"net"
 	"strings"
 
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/dal"
-	"github.com/cloudwego/biz-demo/gomall/app/payment/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/payment/middleware"
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
-	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
-	"github.com/cloudwego/biz-demo/gomall/common/utils"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment/paymentservice"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/server"
 	"github.com/joho/godotenv"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/naskids/nas-mall/app/payment/biz/dal"
+	"github.com/naskids/nas-mall/app/payment/conf"
+	"github.com/naskids/nas-mall/app/payment/middleware"
+	"github.com/naskids/nas-mall/common/mtl"
+	"github.com/naskids/nas-mall/common/serversuite"
+	"github.com/naskids/nas-mall/common/utils"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment/paymentservice"
 )
 
 var serviceName = conf.GetConf().Kitex.Service

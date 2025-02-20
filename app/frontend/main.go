@@ -37,11 +37,11 @@ import (
 	"github.com/joho/godotenv"
 	oteltrace "go.opentelemetry.io/otel/trace"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/middleware"
+	"github.com/naskids/nas-mall/app/frontend/biz/router"
+	"github.com/naskids/nas-mall/app/frontend/conf"
+	"github.com/naskids/nas-mall/app/frontend/infra/mtl"
+	"github.com/naskids/nas-mall/app/frontend/infra/rpc"
+	"github.com/naskids/nas-mall/app/frontend/middleware"
 )
 
 func main() {

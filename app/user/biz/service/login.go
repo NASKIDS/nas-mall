@@ -17,11 +17,12 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
-	user "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/naskids/nas-mall/app/user/biz/dal/mysql"
+	"github.com/naskids/nas-mall/app/user/biz/model"
+	user "github.com/naskids/nas-mall/rpc_gen/kitex_gen/user"
 )
 
 type LoginService struct {

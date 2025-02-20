@@ -17,11 +17,12 @@ package category
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/service"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
-	category "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/category"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+
+	"github.com/naskids/nas-mall/app/frontend/biz/service"
+	"github.com/naskids/nas-mall/app/frontend/biz/utils"
+	category "github.com/naskids/nas-mall/app/frontend/hertz_gen/frontend/category"
 )
 
 // Category .
