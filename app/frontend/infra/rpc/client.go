@@ -22,6 +22,17 @@ import (
 	"github.com/cloudwego/kitex/pkg/circuitbreak"
 	"github.com/cloudwego/kitex/pkg/fallback"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	dns "github.com/kitex-contrib/resolver-dns"
+
+	"github.com/naskids/nas-mall/app/frontend/infra/mtl"
+	frontendutils "github.com/naskids/nas-mall/app/frontend/utils"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart/cartservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/checkout/checkoutservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product/productcatalogservice"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/user/userservice"
+
 	prometheus "github.com/kitex-contrib/monitor-prometheus"
 
 	"github.com/naskids/nas-mall/app/frontend/conf"
@@ -44,17 +55,12 @@ var (
 	OrderClient    orderservice.Client
 	once           sync.Once
 	err            error
-	registryAddr   string
 	commonSuite    client.Option
 )
 
 func InitClient() {
 	once.Do(func() {
-		registryAddr = conf.GetConf().Hertz.RegistryAddr
-		commonSuite = client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			RegistryAddr:       registryAddr,
-			CurrentServiceName: frontendutils.ServiceName,
-		})
+		commonSuite = client.WithResolver(dns.NewDNSResolver())
 		initProductClient()
 		initUserClient()
 		initCartClient()
