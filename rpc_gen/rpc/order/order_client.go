@@ -4,10 +4,11 @@ import (
 	"context"
 
 	order "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
-	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
+
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
 )
 
 type RPCClient interface {
