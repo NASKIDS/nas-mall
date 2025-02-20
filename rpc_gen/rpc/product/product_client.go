@@ -2,11 +2,13 @@ package product
 
 import (
 	"context"
-	product "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
+	product "github.com/naskids/nas-mall/rpc_gen/kitex_gen/product"
+
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
+
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product/productcatalogservice"
 )
 
 type RPCClient interface {

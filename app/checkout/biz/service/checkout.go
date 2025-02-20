@@ -20,19 +20,20 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/cloudwego/biz-demo/gomall/app/checkout/infra/mq"
-	"github.com/cloudwego/biz-demo/gomall/app/checkout/infra/rpc"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
-	checkout "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/nats-io/nats.go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
+
+	"github.com/naskids/nas-mall/app/checkout/infra/mq"
+	"github.com/naskids/nas-mall/app/checkout/infra/rpc"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart"
+	checkout "github.com/naskids/nas-mall/rpc_gen/kitex_gen/checkout"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/email"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product"
 )
 
 type CheckoutService struct {
@@ -122,7 +123,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	klog.Info(emptyResult)
 	// charge
 	var orderId string
-	if orderResult != nil || orderResult.Order != nil {
+	if orderResult != nil && orderResult.Order != nil {
 		orderId = orderResult.Order.OrderId
 	}
 	payReq := &payment.ChargeReq{
@@ -138,7 +139,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	}
 	paymentResult, err := rpc.PaymentClient.Charge(s.ctx, payReq)
 	if err != nil {
-		err = fmt.Errorf("Charge.err:%v", err)
+		err = fmt.Errorf("charge.err:%v", err)
 		return
 	}
 	data, _ := proto.Marshal(&email.EmailReq{

@@ -19,12 +19,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/model"
-	payment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
+
+	"github.com/naskids/nas-mall/app/payment/biz/dal/mysql"
+
+	"github.com/naskids/nas-mall/app/payment/biz/model"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
 )
 
 type ChargeService struct {
@@ -59,9 +61,6 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 		Amount:        req.Amount,
 		PayAt:         time.Now(),
 	})
-	if err != nil {
-		return nil, err
-	}
 	if err != nil {
 		return nil, err
 	}

@@ -18,10 +18,11 @@ import (
 	"context"
 	"errors"
 
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/naskids/nas-mall/app/user/biz/dal/mysql"
+	"github.com/naskids/nas-mall/app/user/biz/model"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/user"
 )
 
 type RegisterService struct {
@@ -35,7 +36,7 @@ func NewRegisterService(ctx context.Context) *RegisterService {
 func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, err error) {
 	// Finish your business logic.
 	if req.Password != req.ConfirmPassword {
-		err = errors.New("Password must be the same as ConfirmPassword")
+		err = errors.New("password must be the same as ConfirmPassword")
 		return
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)

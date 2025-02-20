@@ -17,10 +17,11 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
-	cart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/kitex/pkg/kerrors"
+
+	"github.com/naskids/nas-mall/app/cart/biz/dal/mysql"
+	"github.com/naskids/nas-mall/app/cart/biz/model"
+	cart "github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart"
 )
 
 type GetCartService struct {

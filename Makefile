@@ -1,3 +1,5 @@
+v ?= lastest
+
 .PHONY: all
 all: help
 
@@ -14,21 +16,27 @@ init: ## Just copy `.env.example` to `.env` with one click, executed once.
 
 ##@ Build
 
-.PHONY: gen
-gen: ## gen client code of {svc}. example: make gen svc=product
-	@scripts/gen.sh ${svc}
-
 .PHONY: gen-client
 gen-client: ## gen client code of {svc}. example: make gen-client svc=product
-	@cd rpc_gen && cwgo client --type RPC --service ${svc} --module github.com/cloudwego/biz-demo/gomall/rpc_gen  -I ../idl  --idl ../idl/${svc}.proto
+	cd rpc_gen && cwgo client --type RPC --service ${svc} --module github.com/naskids/nas-mall/rpc_gen  -I ../idl  --idl ../idl/${svc}.proto
 
 .PHONY: gen-server
 gen-server: ## gen service code of {svc}. example: make gen-server svc=product
-	@cd app/${svc} && cwgo server --type RPC --service ${svc} --module github.com/cloudwego/biz-demo/gomall/app/${svc} --pass "-use github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen"  -I ../../idl  --idl ../../idl/${svc}.proto
+	cd app/${svc} && cwgo server --type RPC --service ${svc} --module github.com/naskids/nas-mall/app/${svc} --pass "-use github.com/naskids/nas-mall/rpc_gen/kitex_gen"  -I ../../idl  --idl ../../idl/${svc}.proto
+
+.PHONY: gen
+gen: gen-client gen-server ## gen client and svc code of {svc}. example: make gen svc=product
 
 .PHONY: gen-frontend
-gen-frontend:
-	@cd app/frontend && cwgo server -I ../../idl --type HTTP --service frontend --module github.com/cloudwego/biz-demo/gomall/app/frontend --idl ../../idl/frontend/checkout_page.proto
+gen-frontend: ## gen handler from one of proto files of frontend
+	cd app/frontend && for proto_file in ../../idl/frontend/*.proto; \
+    do \
+        filename=$$(basename $$proto_file); \
+        if [ $$filename = "common.proto" ]; then \
+          continue; \
+        fi; \
+        cwgo server -I ../../idl --type HTTP --service frontend --module github.com/naskids/nas-mall/app/frontend --idl $$proto_file; \
+    done
 
 ##@ Build
 
@@ -53,14 +61,23 @@ vet: ## run `go vet` for all go module
 lint-fix: ## run `golangci-lint` for all go module
 	scripts/fix.sh
 
+.PHONY: test
+test: ## go unit test
+# TODO go test
+
+.PHONY: bin
+bin: ## build binaries
+	scripts/build_all.sh
+
 .PHONY: run
 run: ## run {svc} server. example: make run svc=product
 	scripts/run.sh ${svc}
 
-.PHONY: test
-test:
-# TODO   go test
-##@ Development Env
+.PHONY: clean
+clean: ## clean up all the tmp files
+	rm -r app/**/log/ app/**/tmp/ app/**/output/ app/**/nohup.out
+
+##@ Development Env With Docker Compose
 
 .PHONY: env-start
 env-start:  ## launch all middleware software as the docker
@@ -69,10 +86,6 @@ env-start:  ## launch all middleware software as the docker
 .PHONY: env-stop
 env-stop: ## stop all docker
 	@docker-compose down
-
-.PHONY: clean
-clean: ## clean up all the tmp files
-	@rm -r app/**/log/ app/**/tmp/
 
 ##@ Open Browser
 
@@ -112,6 +125,8 @@ build-all: tidy vet lint-fix test ## build all service image
 	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
 	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
 	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+
+##@ Deploy Images
 
 .PHONY: deploy
 deploy: ## deploy manifests to kubernetes

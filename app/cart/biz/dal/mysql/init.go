@@ -18,13 +18,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
+	"github.com/naskids/nas-mall/common/mtl"
 
-	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/plugin/opentelemetry/tracing"
+
+	"github.com/naskids/nas-mall/app/cart/biz/model"
+	"github.com/naskids/nas-mall/app/cart/conf"
 )
 
 var (

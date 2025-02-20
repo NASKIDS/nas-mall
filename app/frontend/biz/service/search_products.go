@@ -25,21 +25,22 @@ import (
 	rpcproduct "github.com/naskids/nas-mall/rpc_gen/kitex_gen/product"
 )
 
-type GetProductService struct {
+type SearchProductsService struct {
 	RequestContext *app.RequestContext
 	Context        context.Context
 }
 
-func NewGetProductService(Context context.Context, RequestContext *app.RequestContext) *GetProductService {
-	return &GetProductService{RequestContext: RequestContext, Context: Context}
+func NewSearchProductsService(Context context.Context, RequestContext *app.RequestContext) *SearchProductsService {
+	return &SearchProductsService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *GetProductService) Run(req *product.ProductReq) (resp map[string]any, err error) {
-	p, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: req.GetId()})
+func (h *SearchProductsService) Run(req *product.SearchProductsReq) (resp map[string]any, err error) {
+	p, err := rpc.ProductClient.SearchProducts(h.Context, &rpcproduct.SearchProductsReq{Query: req.Q})
 	if err != nil {
 		return nil, err
 	}
 	return utils.H{
-		"item": p.Product,
+		"items": p.Results,
+		"q":     req.Q,
 	}, nil
 }

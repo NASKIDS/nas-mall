@@ -18,10 +18,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/payment/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/app/payment/biz/model"
+	"github.com/naskids/nas-mall/app/payment/conf"
 )
 
 var (
