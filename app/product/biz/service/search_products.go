@@ -36,7 +36,7 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 	var results []*product.Product
 	for _, v := range p {
 		results = append(results, &product.Product{
-			Id:          uint32(v.ID),
+			Id:          v.ID,
 			Name:        v.Name,
 			Description: v.Description,
 			Picture:     v.Picture,

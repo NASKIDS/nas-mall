@@ -40,7 +40,7 @@ func NewGetCartService(Context context.Context, RequestContext *app.RequestConte
 func (h *GetCartService) Run(req *common.Empty) (resp map[string]any, err error) {
 	var items []map[string]string
 	carts, err := rpc.CartClient.GetCart(h.Context, &rpccart.GetCartReq{
-		UserId: uint32(h.Context.Value(frontendutils.UserIdKey).(float64)),
+		UserId: uint64(h.Context.Value(frontendutils.UserIdKey).(float64)),
 	})
 	if err != nil {
 		return nil, err

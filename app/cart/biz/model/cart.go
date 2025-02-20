@@ -19,12 +19,14 @@ import (
 	"errors"
 
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/common"
 )
 
 type Cart struct {
-	Base
-	UserId    uint32 `json:"user_id"`
-	ProductId uint32 `json:"product_id"`
+	common.Model
+	UserId    uint64 `json:"user_id"`
+	ProductId uint64 `json:"product_id"`
 	Qty       uint32 `json:"qty"`
 }
 
@@ -32,7 +34,7 @@ func (c Cart) TableName() string {
 	return "cart"
 }
 
-func GetCartByUserId(db *gorm.DB, ctx context.Context, userId uint32) (cartList []*Cart, err error) {
+func GetCartByUserId(db *gorm.DB, ctx context.Context, userId uint64) (cartList []*Cart, err error) {
 	err = db.Debug().WithContext(ctx).Model(&Cart{}).Find(&cartList, "user_id = ?", userId).Error
 	return cartList, err
 }
@@ -51,7 +53,7 @@ func AddCart(db *gorm.DB, ctx context.Context, c *Cart) error {
 	return err
 }
 
-func EmptyCart(db *gorm.DB, ctx context.Context, userId uint32) error {
+func EmptyCart(db *gorm.DB, ctx context.Context, userId uint64) error {
 	if userId == 0 {
 		return errors.New("user_is is required")
 	}
