@@ -14,9 +14,13 @@
 
 package model
 
+import (
+	"github.com/naskids/nas-mall/common"
+)
+
 type OrderItem struct {
-	Base
-	ProductId    uint32
+	common.Model
+	ProductId    uint64
 	OrderIdRefer string `gorm:"size:256;index"`
 	Quantity     int32
 	Cost         float32

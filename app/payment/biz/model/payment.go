@@ -19,11 +19,13 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/common"
 )
 
 type PaymentLog struct {
-	Base
-	UserId        uint32    `json:"user_id"`
+	common.Model
+	UserId        uint64    `json:"user_id"`
 	OrderId       string    `json:"order_id"`
 	TransactionId string    `json:"transaction_id"`
 	Amount        float32   `json:"amount"`

@@ -18,10 +18,12 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/common"
 )
 
 type Category struct {
-	Base
+	common.Model
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Products    []Product `json:"product" gorm:"many2many:product_category"`

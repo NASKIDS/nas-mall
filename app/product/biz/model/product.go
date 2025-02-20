@@ -22,10 +22,12 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/common"
 )
 
 type Product struct {
-	Base
+	common.Model
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	Picture     string     `json:"picture"`
@@ -42,8 +44,8 @@ type ProductQuery struct {
 	db  *gorm.DB
 }
 
-func (p ProductQuery) GetById(productId int) (product Product, err error) {
-	err = p.db.WithContext(p.ctx).Model(&Product{}).Where(&Product{Base: Base{ID: productId}}).First(&product).Error
+func (p ProductQuery) GetById(productId uint64) (product Product, err error) {
+	err = p.db.WithContext(p.ctx).Model(&Product{}).Where(&Product{Model: common.Model{ID: productId}}).First(&product).Error
 	return
 }
 
@@ -77,7 +79,7 @@ func (c CachedProductQuery) GetById(productId int) (product Product, err error) 
 		return nil
 	}()
 	if err != nil {
-		product, err = c.productQuery.GetById(productId)
+		product, err = c.productQuery.GetById(uint64(productId))
 		if err != nil {
 			return Product{}, err
 		}
@@ -94,8 +96,8 @@ func NewCachedProductQuery(pq ProductQuery, cacheClient *redis.Client) CachedPro
 	return CachedProductQuery{productQuery: pq, cacheClient: cacheClient, prefix: "cloudwego_shop"}
 }
 
-func GetProductById(db *gorm.DB, ctx context.Context, productId int) (product Product, err error) {
-	err = db.WithContext(ctx).Model(&Product{}).Where(&Product{Base: Base{ID: productId}}).First(&product).Error
+func GetProductById(db *gorm.DB, ctx context.Context, productId uint64) (product Product, err error) {
+	err = db.WithContext(ctx).Model(&Product{}).Where(&Product{Model: common.Model{ID: productId}}).First(&product).Error
 	return product, err
 }
 

@@ -18,6 +18,8 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/common"
 )
 
 type Consignee struct {
@@ -39,9 +41,9 @@ const (
 )
 
 type Order struct {
-	Base
+	common.Model
 	OrderId      string `gorm:"uniqueIndex;size:256"`
-	UserId       uint32
+	UserId       uint64
 	UserCurrency string
 	Consignee    Consignee   `gorm:"embedded"`
 	OrderItems   []OrderItem `gorm:"foreignKey:OrderIdRefer;references:OrderId"`
@@ -52,16 +54,16 @@ func (o Order) TableName() string {
 	return "order"
 }
 
-func ListOrder(db *gorm.DB, ctx context.Context, userId uint32) (orders []Order, err error) {
+func ListOrder(db *gorm.DB, ctx context.Context, userId uint64) (orders []Order, err error) {
 	err = db.Model(&Order{}).Where(&Order{UserId: userId}).Preload("OrderItems").Find(&orders).Error
 	return
 }
 
-func GetOrder(db *gorm.DB, ctx context.Context, userId uint32, orderId string) (order Order, err error) {
+func GetOrder(db *gorm.DB, ctx context.Context, userId uint64, orderId string) (order Order, err error) {
 	err = db.Where(&Order{UserId: userId, OrderId: orderId}).First(&order).Error
 	return
 }
 
-func UpdateOrderState(db *gorm.DB, ctx context.Context, userId uint32, orderId string, state OrderState) error {
+func UpdateOrderState(db *gorm.DB, ctx context.Context, userId uint64, orderId string, state OrderState) error {
 	return db.Model(&Order{}).Where(&Order{UserId: userId, OrderId: orderId}).Update("order_state", state).Error
 }

@@ -16,9 +16,9 @@ package utils
 
 import "context"
 
-func GetUserIdFromCtx(ctx context.Context) uint32 {
+func GetUserIdFromCtx(ctx context.Context) uint64 {
 	if ctx.Value(UserIdKey) == nil {
 		return 0
 	}
-	return uint32(ctx.Value(UserIdKey).(float64))
+	return uint64(ctx.Value(UserIdKey).(float64))
 }

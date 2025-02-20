@@ -18,10 +18,12 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+
+	"github.com/naskids/nas-mall/common"
 )
 
 type User struct {
-	Base
+	common.Model
 	Email          string `gorm:"unique"`
 	PasswordHashed string
 }

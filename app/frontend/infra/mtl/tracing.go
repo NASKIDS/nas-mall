@@ -42,7 +42,7 @@ func InitTracing() route.CtxCallback {
 	TracerProvider = tracesdk.NewTracerProvider(tracesdk.WithSpanProcessor(processor), tracesdk.WithResource(res))
 	otel.SetTracerProvider(TracerProvider)
 
-	return route.CtxCallback(func(ctx context.Context) {
+	return func(ctx context.Context) {
 		exporter.Shutdown(ctx) //nolint:errcheck
-	})
+	}
 }

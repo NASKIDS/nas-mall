@@ -123,7 +123,7 @@ func (x *ChargeReq) fastReadField3(buf []byte, _type int8) (offset int, err erro
 }
 
 func (x *ChargeReq) fastReadField4(buf []byte, _type int8) (offset int, err error) {
-	x.UserId, offset, err = fastpb.ReadUint32(buf, _type)
+	x.UserId, offset, err = fastpb.ReadUint64(buf, _type)
 	return offset, err
 }
 
@@ -234,7 +234,7 @@ func (x *ChargeReq) fastWriteField4(buf []byte) (offset int) {
 	if x.UserId == 0 {
 		return offset
 	}
-	offset += fastpb.WriteUint32(buf[offset:], 4, x.GetUserId())
+	offset += fastpb.WriteUint64(buf[offset:], 4, x.GetUserId())
 	return offset
 }
 
@@ -336,7 +336,7 @@ func (x *ChargeReq) sizeField4() (n int) {
 	if x.UserId == 0 {
 		return n
 	}
-	n += fastpb.SizeUint32(4, x.GetUserId())
+	n += fastpb.SizeUint64(4, x.GetUserId())
 	return n
 }
 

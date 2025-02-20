@@ -34,7 +34,7 @@ type Order struct {
 }
 
 type OrderItem struct {
-	ProductId   uint32
+	ProductId   uint64
 	ProductName string
 	Picture     string
 	Qty         uint32

@@ -8,7 +8,7 @@ import "frontend/common.proto";
 option go_package = "frontend/product";
 
 message ProductReq {
-  uint32 id = 1 [(api.query) = "id"];
+  uint64 id = 1 [(api.query) = "id"];
 }
 
 message SearchProductsReq {
