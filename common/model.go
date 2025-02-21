@@ -1,14 +1,14 @@
 package common
 
 import (
-	"database/sql"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Model struct {
 	ID        uint64 `gorm:"primarykey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt DeletedAt `gorm:"index"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
-type DeletedAt sql.NullTime
