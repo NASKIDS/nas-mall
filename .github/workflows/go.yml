@@ -21,7 +21,6 @@ jobs:
         go-version: '1.21'
         cache-dependency-path: 'app/**/go.sum'
         architecture: amd64
-        cache-hit: true
 
     - name: Cache Go modules
       uses: actions/cache@v3
