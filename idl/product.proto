@@ -3,46 +3,88 @@ syntax = "proto3";
 package product;
 
 option go_package = "/product";
-
+// 创建商品
+// 修改商品信息
+// 删除商品
+// 查询商品信息（单个商品、批量商品）
 service ProductCatalogService {
   rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
   rpc GetProduct(GetProductReq) returns (GetProductResp) {}
   rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
-}
-
-message ListProductsReq{
-  int32 page = 1;
-  int64 pageSize = 2;
-
-  string categoryName = 3;
+  rpc CreateProduct(CreateProductReq) returns (CreateProductResp) {}
+  rpc UpdateProduct(UpdateProductReq) returns (UpdateProductResp) {}
+  rpc DeleteProduct(DeleteProductReq) returns (DeleteProductResp) {}
 }
 
 message Product {
-  uint64 id = 1;
-  string name = 2;
-  string description = 3;
-  string picture = 4;
-  float price = 5;
-
-  repeated string categories = 6;
+  uint64 id = 1;    // ID
+  string name = 2;  // 商品名称
+  string description = 3; // 商品描述
+  string picture = 4;     // 商品图片URL
+  float price = 5;        // 商品价格
+  repeated string categories = 6; // 商品种类
 }
-
+// 按照 商品种类 批量查询？
+message ListProductsReq {
+  int32 pageNumber = 1;
+  int64 pageSize = 2;
+  string categoryName = 3;
+}
 message ListProductsResp {
-  repeated Product products = 1;
+  repeated Product products = 1;  // repeated 修饰符，可以看作数组
 }
 
+// 单个商品查询（比如点进某个商品详细页）
 message GetProductReq {
   uint64 id = 1;
 }
-
 message GetProductResp {
   Product product = 1;
 }
 
+// 搜索商品（批量查询）？
 message SearchProductsReq {
-  string query = 1;
+  string query = 1; // 商品相关信息
+  optional float minPrice = 2;  // 价格区间过滤
+  optional float maxPrice = 3;
+  repeated string categories = 4; // 分类叠加过滤
+  int32 pageNumber = 5;
+  int64 pageSize = 6;
 }
-
 message SearchProductsResp {
   repeated Product results = 1;
+}
+
+// 创建商品
+message CreateProductReq {
+  Product product = 1;
+}
+message CreateProductResp {
+  // 响应状态
+  bool success = 1;
+  // 错误信息
+  string message = 2;
+}
+
+// 修改商品信息
+message UpdateProductReq {
+  uint64 id = 1;
+  Product product = 2;
+}
+message UpdateProductResp {
+  // 响应状态
+  bool success = 1;
+  // 错误信息
+  string message = 2;
+}
+
+// 删除商品
+message DeleteProductReq {
+  uint64 id = 1;
+}
+message DeleteProductResp {
+  // 响应状态
+  bool success = 1;
+  // 错误信息
+  string message = 2;
 }
