@@ -12,9 +12,14 @@ spec:
       labels:
         app: product
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: [ 'sh', '-c', 'until nc -z -v -w30 mysql-svc 3306; do echo waiting for database; sleep 5; done;' ]
       containers:
       - name: product
-        image: "product:v1.0.0"
+        image: "product:latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -35,13 +40,35 @@ spec:
             secretKeyRef:
               name: mysql-password
               key: password
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_traces_endpoint
+        - name: OTEL_EXPORTER_OTLP_INSECURE
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_insecure
       volumes:
       - name: product-config
         configMap:
-          name: gomall-config
+          name: nas-mall-config
           items:
           - key: product-app-config
             path: conf.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product
+  namespace: nas-mall
+spec:
+  selector:
+    app: product
+  ports:
+    - port: 443
+      targetPort: 8881
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -59,7 +86,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: "frontend:v1.0.2"
+        image: "frontend:latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -76,13 +103,19 @@ spec:
         - name: SESSION_SECRET
           value: "4UFIOADJFIJIASOFJI"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "http://jaeger-svc:4317"
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_traces_endpoint
         - name: OTEL_EXPORTER_OTLP_INSECURE
-          value: "true"
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_insecure
       volumes:
       - name: frontend-config
         configMap:
-          name: gomall-config
+          name: nas-mall-config
           items:
           - key: frontend-app-config
             path: conf.yaml
@@ -114,9 +147,14 @@ spec:
       labels:
         app: cart
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: [ 'sh', '-c', 'until nc -z -v -w30 mysql-svc 3306; do echo waiting for database; sleep 5; done;' ]
       containers:
       - name: cart
-        image: "cart:v1.0.0"
+        image: "cart:latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -137,13 +175,35 @@ spec:
             secretKeyRef:
               name: mysql-password
               key: password
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_traces_endpoint
+        - name: OTEL_EXPORTER_OTLP_INSECURE
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_insecure
       volumes:
       - name: cart-config
         configMap:
-          name: gomall-config
+          name: nas-mall-config
           items:
           - key: cart-app-config
-            path: conf.yaml
+            path: conf.yaml±
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart
+  namespace: nas-mall
+spec:
+  selector:
+    app: cart
+  ports:
+    - port: 443
+      targetPort: 8883
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -161,7 +221,7 @@ spec:
     spec:
       containers:
       - name: checkout
-        image: "checkout:v1.0.0"
+        image: "checkout:latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -175,52 +235,34 @@ spec:
         - name: GO_ENV
           value: "dev"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "http://jaeger-svc:4317"
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_traces_endpoint
         - name: OTEL_EXPORTER_OTLP_INSECURE
-          value: "true"
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_insecure
       volumes:
       - name: checkout-config
         configMap:
-          name: gomall-config
+          name: nas-mall-config
           items:
           - key: checkout-app-config
             path: conf.yaml
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: email
+  name: checkout
   namespace: nas-mall
 spec:
   selector:
-    matchLabels:
-      app: email
-  template:
-    metadata:
-      labels:
-        app: email
-    spec:
-      containers:
-      - name: email
-        image: "email:v1.0.0"
-        imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        volumeMounts:
-        - name: email-config
-          mountPath: /opt/gomall/email/conf/dev
-        env:
-        - name: GO_ENV
-          value: "dev"
-      volumes:
-      - name: email-config
-        configMap:
-          name: gomall-config
-          items:
-          - key: email-app-config
-            path: conf.yaml
+    app: checkout
+  ports:
+    - port: 443
+      targetPort: 8884
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -236,9 +278,14 @@ spec:
       labels:
         app: order
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: [ 'sh', '-c', 'until nc -z -v -w30 mysql-svc 3306; do echo waiting for database; sleep 5; done;' ]
       containers:
       - name: order
-        image: "order:v1.0.0"
+        image: "order:latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -259,13 +306,35 @@ spec:
             secretKeyRef:
               name: mysql-password
               key: password
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_traces_endpoint
+        - name: OTEL_EXPORTER_OTLP_INSECURE
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_insecure
       volumes:
       - name: order-config
         configMap:
-          name: gomall-config
+          name: nas-mall-config
           items:
           - key: order-app-config
             path: conf.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+  namespace: nas-mall
+spec:
+  selector:
+    app: order
+  ports:
+    - port: 443
+      targetPort: 8885
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -281,9 +350,14 @@ spec:
       labels:
         app: payment
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: [ 'sh', '-c', 'until nc -z -v -w30 mysql-svc 3306; do echo waiting for database; sleep 5; done;' ]
       containers:
       - name: payment
-        image: "payment:v1.0.0"
+        image: "payment:latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -304,13 +378,35 @@ spec:
             secretKeyRef:
               name: mysql-password
               key: password
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_traces_endpoint
+        - name: OTEL_EXPORTER_OTLP_INSECURE
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_insecure
       volumes:
       - name: payment-config
         configMap:
-          name: gomall-config
+          name: nas-mall-config
           items:
           - key: payment-app-config
             path: conf.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  namespace: nas-mall
+spec:
+  selector:
+    app: payment
+  ports:
+    - port: 443
+      targetPort: 8886
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -333,7 +429,7 @@ spec:
           command: [ 'sh', '-c', 'until nc -z -v -w30 mysql-svc 3306; do echo waiting for database; sleep 5; done;' ]
       containers:
       - name: user
-        image: "user:v1.0.3"
+        image: "latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -354,10 +450,20 @@ spec:
             secretKeyRef:
               name: mysql-password
               key: password
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_traces_endpoint
+        - name: OTEL_EXPORTER_OTLP_INSECURE
+          valueFrom:
+            configMapKeyRef:
+              name: nas-mall-config
+              key: otel_exporter_otlp_insecure
       volumes:
       - name: user-config
         configMap:
-          name: gomall-config
+          name: nas-mall-config
           items:
           - key: user-app-config
             path: conf.yaml
@@ -378,7 +484,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: gomall-config
+  name: nas-mall-config
   namespace: nas-mall
 data:
   product-app-config: |
@@ -558,5 +664,5 @@ data:
       username: ""
       password: ""
       db: 0
-
-
+  otel_exporter_otlp_traces_endpoint: "http://jaeger-svc:4317"
+  otel_exporter_otlp_insecure: "true"

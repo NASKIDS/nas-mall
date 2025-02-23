@@ -1,4 +1,5 @@
-v ?= lastest
+v ?= $(shell git describe --tags --always --dirty)
+ctx ?= docker-desktop
 
 .PHONY: all
 all: help
@@ -120,7 +121,7 @@ build-all: tidy vet lint-fix test ## build all service image
 	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
 	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
 	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
-	docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
+#	docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
 	docker build -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
 	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
 	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
@@ -130,5 +131,5 @@ build-all: tidy vet lint-fix test ## build all service image
 
 .PHONY: deploy
 deploy: ## deploy manifests to kubernetes
-	kubectl apply --context=${context} -f deploy/gomall-dev-base.yaml
-	kubectl apply --context=${context} -f deploy/gomall-dev-app.yaml
+	kubectl apply --context=${ctx} -f deploy/gomall-dev-base.yaml
+	kubectl apply --context=${ctx} -f deploy/gomall-dev-app.yaml
