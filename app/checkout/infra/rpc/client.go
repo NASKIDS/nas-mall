@@ -20,12 +20,15 @@ import (
 	"github.com/cloudwego/kitex/client"
 
 	"github.com/naskids/nas-mall/app/checkout/conf"
-	checkoututils "github.com/naskids/nas-mall/app/checkout/utils"
 	"github.com/naskids/nas-mall/common/clientsuite"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment/paymentservice"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product/productcatalogservice"
+	rpccart "github.com/naskids/nas-mall/rpc_gen/rpc/cart"
+	rpcorder "github.com/naskids/nas-mall/rpc_gen/rpc/order"
+	rpcpayment "github.com/naskids/nas-mall/rpc_gen/rpc/payment"
+	rpcproduct "github.com/naskids/nas-mall/rpc_gen/rpc/product"
 )
 
 var (
@@ -35,18 +38,15 @@ var (
 	OrderClient   orderservice.Client
 	once          sync.Once
 	err           error
-	registryAddr  string
 	serviceName   string
 	commonSuite   client.Option
 )
 
 func InitClient() {
 	once.Do(func() {
-		registryAddr = conf.GetConf().Registry.RegistryAddress[0]
 		serviceName = conf.GetConf().Kitex.Service
 		commonSuite = client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: serviceName,
-			RegistryAddr:       registryAddr,
 		})
 		initCartClient()
 		initProductClient()
@@ -56,21 +56,22 @@ func InitClient() {
 }
 
 func initProductClient() {
-	ProductClient, err = productcatalogservice.NewClient("product", commonSuite)
-	checkoututils.MustHandleError(err)
+	rpcproduct.InitClient("product", commonSuite)
+	ProductClient = rpcproduct.DefaultClient()
 }
 
 func initCartClient() {
-	CartClient, err = cartservice.NewClient("cart", commonSuite)
-	checkoututils.MustHandleError(err)
+	rpccart.InitClient("cart", commonSuite)
+	CartClient = rpccart.DefaultClient()
 }
 
 func initPaymentClient() {
-	PaymentClient, err = paymentservice.NewClient("payment", commonSuite)
-	checkoututils.MustHandleError(err)
+	rpcpayment.InitClient("payment", commonSuite)
+	PaymentClient = rpcpayment.DefaultClient()
+
 }
 
 func initOrderClient() {
-	OrderClient, err = orderservice.NewClient("order", commonSuite)
-	checkoututils.MustHandleError(err)
+	rpcorder.InitClient("order", commonSuite)
+	OrderClient = rpcorder.DefaultClient()
 }
