@@ -29,7 +29,6 @@ import (
 var (
 	ProductClient productcatalogservice.Client
 	once          sync.Once
-	err           error
 	serviceName   string
 )
 

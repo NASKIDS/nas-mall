@@ -37,7 +37,6 @@ var (
 	PaymentClient paymentservice.Client
 	OrderClient   orderservice.Client
 	once          sync.Once
-	err           error
 	serviceName   string
 	commonSuite   client.Option
 )
@@ -68,7 +67,6 @@ func initCartClient() {
 func initPaymentClient() {
 	rpcpayment.InitClient("payment", commonSuite)
 	PaymentClient = rpcpayment.DefaultClient()
-
 }
 
 func initOrderClient() {
