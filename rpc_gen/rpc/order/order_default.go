@@ -35,3 +35,22 @@ func MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidReq, callOptions
 	}
 	return resp, nil
 }
+
+func MarkOrderCanceled(ctx context.Context, req *order.MarkOrderCanceledReq, callOptions ...callopt.Option) (resp *order.MarkOrderCanceledResp, err error) {
+	resp, err = defaultClient.MarkOrderCanceled(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "MarkOrderCanceled call failed,err =%+v", err)
+		return nil, err
+	}	
+	return resp, nil
+}
+
+func DeleteOrder(ctx context.Context, req *order.DeleteOrderReq, callOptions ...callopt.Option) (resp *order.DeleteOrderResp, err error) {
+	resp, err = defaultClient.DeleteOrder(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "DeleteOrder call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+					

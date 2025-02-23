@@ -67,3 +67,20 @@ func GetOrder(db *gorm.DB, ctx context.Context, userId uint64, orderId string) (
 func UpdateOrderState(db *gorm.DB, ctx context.Context, userId uint64, orderId string, state OrderState) error {
 	return db.Model(&Order{}).Where(&Order{UserId: userId, OrderId: orderId}).Update("order_state", state).Error
 }
+
+// DeleteOrder soft deletes an order and its items
+func DeleteOrder(db *gorm.DB, ctx context.Context, userId uint64, orderId string) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		// 软删除订单项
+		if err := tx.Model(&OrderItem{}).Where("order_id_refer = ?", orderId).Update("deleted_at", tx.NowFunc()).Error; err != nil {
+			return err
+		}
+		
+		// 软删除订单
+		if err := tx.Model(&Order{}).Where(&Order{UserId: userId, OrderId: orderId}).Update("deleted_at", tx.NowFunc()).Error; err != nil {
+			return err
+		}
+		
+		return nil
+	})
+}
