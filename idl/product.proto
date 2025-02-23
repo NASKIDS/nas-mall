@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package product;
 
+import "frontend/common.proto";
+
 option go_package = "/product";
 // 创建商品
 // 修改商品信息
@@ -57,25 +59,27 @@ message SearchProductsResp {
 
 // 创建商品
 message CreateProductReq {
-  Product product = 1;
+  string name = 1;  // 商品名称
+  string description = 2; // 商品描述
+  string picture = 3;     // 商品图片URL
+  float price = 4;        // 商品价格
+  repeated string categories = 5; // 商品种类
 }
 message CreateProductResp {
-  // 响应状态
-  bool success = 1;
-  // 错误信息
-  string message = 2;
+  Product product = 1;
 }
 
 // 修改商品信息
 message UpdateProductReq {
-  uint64 id = 1;
-  Product product = 2;
+  uint64 id = 1; // 旧id
+  optional string name = 2;  // 新商品名称
+  optional string description = 3; // 新商品描述
+  optional string picture = 4;     // 新商品图片URL
+  optional float price = 5;        // 新商品价格
+  repeated string categories = 6;
 }
 message UpdateProductResp {
-  // 响应状态
-  bool success = 1;
-  // 错误信息
-  string message = 2;
+  Product product = 1;
 }
 
 // 删除商品
@@ -83,8 +87,5 @@ message DeleteProductReq {
   uint64 id = 1;
 }
 message DeleteProductResp {
-  // 响应状态
-  bool success = 1;
-  // 错误信息
-  string message = 2;
+  Product product = 1;
 }

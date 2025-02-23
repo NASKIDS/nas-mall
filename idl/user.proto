@@ -37,10 +37,6 @@ message LogoutReq {
 }
 
 message LogoutResp {
-    // 响应状态
-    bool success = 1;
-    // 错误信息
-    string message = 2;
 }
 
 // 删除用户
@@ -50,10 +46,6 @@ message DeleteUserReq {
     string password = 2;
 }
 message DeleteUserResp {
-    // 响应状态
-    bool success = 1;
-    // 错误信息
-    string message = 2;
 }
 
 // 更新用户
@@ -64,12 +56,8 @@ message UpdateUserReq {
     optional string new_password = 4; // 新密码（可选更新）
 }
 message UpdateUserResp {
-    // 响应状态
-    bool success = 1;
-    // 错误信息
-    string message = 2;
-    uint64 user_id = 3;        // 返回更新后的用户ID
-    string new_email = 4;      // 更新后的邮箱（若有修改）
+    uint64 user_id = 1;        // 返回更新后的用户ID
+    string new_email = 2;      // 更新后的邮箱（若有修改）
 }
 
 // 获取用户身份信息
@@ -79,11 +67,9 @@ message GetUserInfoReq {
 }
 
 message GetUserInfoResp {
-    bool success = 1;
-    string message = 2;
-    uint64 user_id = 3;
-    string email = 4;
-    uint64 created_at = 5;
-    uint64 updated_at = 6;
-    uint64 deleted_at = 7;
+    uint64 user_id = 1;
+    string email = 2;
+    uint64 created_at = 3;
+    uint64 updated_at = 4;
+    uint64 deleted_at = 5;
 }
