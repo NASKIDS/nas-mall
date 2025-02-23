@@ -191,7 +191,7 @@ spec:
           name: nas-mall-config
           items:
           - key: cart-app-config
-            path: conf.yaml±
+            path: conf.yaml
 ---
 apiVersion: v1
 kind: Service
