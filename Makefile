@@ -118,14 +118,14 @@ build-svc:  ## build one service image
 
 .PHONY: build-all
 build-all: tidy vet lint-fix test ## build all service image
-	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
-	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
-	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
-#	docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
-	docker build -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
-	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
-	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
-	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} -t frontend:latest .
+	docker build -f ./deploy/Dockerfile.svc -t cart:${v} -t cart:latest --build-arg SVC=cart .
+	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} -t checkout:latest --build-arg SVC=checkout .
+	docker build -f ./deploy/Dockerfile.svc -t email:${v} -t email:latest --build-arg SVC=email .
+	docker build -f ./deploy/Dockerfile.svc -t order:${v} -t order:latest --build-arg SVC=order .
+	docker build -f ./deploy/Dockerfile.svc -t payment:${v} -t payment:latest --build-arg SVC=payment .
+	docker build -f ./deploy/Dockerfile.svc -t product:${v} -t product:latest --build-arg SVC=product .
+	docker build -f ./deploy/Dockerfile.svc -t user:${v} -t user:latest --build-arg SVC=user .
 
 ##@ Deploy Images
 

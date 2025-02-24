@@ -267,6 +267,54 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: email
+  namespace: nas-mall
+spec:
+  selector:
+    matchLabels:
+      app: email
+  template:
+    metadata:
+      labels:
+        app: email
+    spec:
+      containers:
+        - name: email
+          image: "email:latest"
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: email-config
+              mountPath: /opt/gomall/email/conf/dev
+          env:
+            - name: GO_ENV
+              value: "dev"
+      volumes:
+        - name: email-config
+          configMap:
+            name: nas-mall-config
+            items:
+              - key: email-app-config
+                path: conf.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email
+  namespace: nas-mall
+spec:
+  selector:
+    app: email
+  ports:
+    - port: 443
+      targetPort: 8888
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: order
   namespace: nas-mall
 spec:
@@ -592,7 +640,7 @@ data:
     mysql:
       dsn: "gorm:gorm@tcp(127.0.0.1:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local"
     redis:
-      address: "127.0.0.1:6379"
+      address: "redis-svc:6379"
       username: ""
       password: ""
       db: 0

@@ -3,6 +3,7 @@ go 1.21
 use (
 	./app/cart
 	./app/checkout
+	./app/email
 	./app/frontend
 	./app/order
 	./app/payment
