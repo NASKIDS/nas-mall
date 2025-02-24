@@ -49,7 +49,7 @@ func Init() {
 	}
 	if os.Getenv("GO_ENV") != "online" {
 		needDemoData := !DB.Migrator().HasTable(&model.Product{})
-		err = DB.AutoMigrate( //nolint:errcheck
+		err = DB.AutoMigrate(
 			&model.Product{}, &model.Category{})
 		if err != nil {
 			klog.Warnf("auto migrate tables failed, err:%v", err)
