@@ -44,7 +44,7 @@ spec:
             name: mysql-ini
         - name: mysql-data
           hostPath:
-            path: /data/mysql
+            path: /Users/dexuan.xu/GolandProjects/biz-demo/gomall/data/mysql
             type: DirectoryOrCreate
 ---
 apiVersion: v1
@@ -90,7 +90,7 @@ spec:
       volumes:
         - name: consul-data
           hostPath:
-            path: /data/consul
+            path: /Users/dexuan.xu/GolandProjects/biz-demo/gomall/data/consul
             type: DirectoryOrCreate
 ---
 apiVersion: v1
@@ -104,6 +104,7 @@ spec:
   ports:
     - port: 8500
       targetPort: 8500
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -136,7 +137,7 @@ spec:
       volumes:
         - name: redis-data
           hostPath:
-            path: /data/redis
+            path: /Users/dexuan.xu/GolandProjects/biz-demo/gomall/data/redis
             type: DirectoryOrCreate
 ---
 apiVersion: v1
@@ -150,6 +151,7 @@ spec:
   ports:
     - port: 6379
       targetPort: 6379
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -182,7 +184,7 @@ spec:
       volumes:
         - name: nats-data
           hostPath:
-            path: /data/nats
+            path: /Users/dexuan.xu/GolandProjects/biz-demo/gomall/data/nats
             type: DirectoryOrCreate
 ---
 apiVersion: v1
@@ -233,7 +235,7 @@ spec:
       volumes:
         - name: jaeger-data
           hostPath:
-            path: /data/jaeger
+            path: /Users/dexuan.xu/GolandProjects/biz-demo/gomall/data/jaeger
             type: DirectoryOrCreate
 ---
 apiVersion: v1
@@ -292,7 +294,7 @@ spec:
             name: prom-config
         - name: prometheus-data
           hostPath:
-            path: /data/prometheus
+            path: /Users/dexuan.xu/GolandProjects/biz-demo/gomall/data/prometheus
             type: DirectoryOrCreate
 ---
 apiVersion: v1
