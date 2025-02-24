@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package product;
 
-import "frontend/common.proto";
-
 option go_package = "/product";
 // 创建商品
 // 修改商品信息
@@ -71,7 +69,7 @@ message CreateProductResp {
 
 // 修改商品信息
 message UpdateProductReq {
-  uint64 id = 1; // 旧id
+  uint64 id = 1;
   optional string name = 2;  // 新商品名称
   optional string description = 3; // 新商品描述
   optional string picture = 4;     // 新商品图片URL
