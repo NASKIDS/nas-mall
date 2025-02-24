@@ -46,7 +46,6 @@ var (
 	CheckoutClient checkoutservice.Client
 	OrderClient    orderservice.Client
 	once           sync.Once
-	commonSuite    client.Option
 )
 
 func InitClient() {
@@ -97,21 +96,21 @@ func initProductClient() {
 }
 
 func initUserClient() {
-	rpcuser.InitClient("user", commonSuite)
+	rpcuser.InitClient("user")
 	UserClient = rpcuser.DefaultClient()
 }
 
 func initCartClient() {
-	rpccart.InitClient("cart", commonSuite)
+	rpccart.InitClient("cart")
 	CartClient = rpccart.DefaultClient()
 }
 
 func initCheckoutClient() {
-	rpccheckout.InitClient("checkout", commonSuite)
+	rpccheckout.InitClient("checkout")
 	CheckoutClient = rpccheckout.DefaultClient()
 }
 
 func initOrderClient() {
-	rpcorder.InitClient("order", commonSuite)
+	rpcorder.InitClient("order")
 	OrderClient = rpcorder.DefaultClient()
 }
