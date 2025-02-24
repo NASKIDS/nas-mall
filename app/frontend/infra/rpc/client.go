@@ -22,6 +22,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/circuitbreak"
 	"github.com/cloudwego/kitex/pkg/fallback"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	dns "github.com/kitex-contrib/resolver-dns"
 
 	"github.com/naskids/nas-mall/app/frontend/infra/mtl"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart/cartservice"
@@ -46,10 +47,12 @@ var (
 	CheckoutClient checkoutservice.Client
 	OrderClient    orderservice.Client
 	once           sync.Once
+	commonSuite    client.Option
 )
 
 func InitClient() {
 	once.Do(func() {
+		commonSuite = client.WithResolver(dns.NewDNSResolver())
 		initProductClient()
 		initUserClient()
 		initCartClient()
@@ -96,7 +99,7 @@ func initProductClient() {
 }
 
 func initUserClient() {
-	rpcuser.InitClient("user")
+	rpcuser.InitClient("user", commonSuite)
 	UserClient = rpcuser.DefaultClient()
 }
 
