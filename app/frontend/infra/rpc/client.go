@@ -69,6 +69,7 @@ func initProductClient() {
 	})
 	cbs.UpdateServiceCBConfig("shop-frontend/product/GetProduct", circuitbreak.CBConfig{Enable: true, ErrRate: 0.5, MinSample: 2})
 
+	opts = append(opts, client.WithResolver(dns.NewDNSResolver()))
 	opts = append(
 		opts,
 		client.WithCircuitBreaker(cbs),
@@ -104,16 +105,16 @@ func initUserClient() {
 }
 
 func initCartClient() {
-	rpccart.InitClient("cart")
+	rpccart.InitClient("cart", commonSuite)
 	CartClient = rpccart.DefaultClient()
 }
 
 func initCheckoutClient() {
-	rpccheckout.InitClient("checkout")
+	rpccheckout.InitClient("checkout", commonSuite)
 	CheckoutClient = rpccheckout.DefaultClient()
 }
 
 func initOrderClient() {
-	rpcorder.InitClient("order")
+	rpcorder.InitClient("order", commonSuite)
 	OrderClient = rpcorder.DefaultClient()
 }
