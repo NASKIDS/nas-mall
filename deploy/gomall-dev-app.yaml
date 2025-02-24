@@ -292,6 +292,16 @@ spec:
           env:
             - name: GO_ENV
               value: "dev"
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: nas-mall-config
+                  key: otel_exporter_otlp_traces_endpoint
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              valueFrom:
+                configMapKeyRef:
+                  name: nas-mall-config
+                  key: otel_exporter_otlp_insecure
       volumes:
         - name: email-config
           configMap:
