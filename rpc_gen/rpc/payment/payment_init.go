@@ -11,10 +11,8 @@ var (
 	// todo edit custom config
 	defaultClient     RPCClient
 	defaultDstService = "payment"
-	defaultClientOpts = []client.Option{
-		client.WithResolver(dns.NewDNSResolver()),
-	}
-	once sync.Once
+	defaultClientOpts []client.Option
+	once              sync.Once
 )
 
 func init() {
@@ -23,6 +21,7 @@ func init() {
 
 func DefaultClient() RPCClient {
 	once.Do(func() {
+		defaultClientOpts = append(defaultClientOpts, client.WithResolver(dns.NewDNSResolver()))
 		defaultClient = newClient(defaultDstService, defaultClientOpts...)
 	})
 	return defaultClient

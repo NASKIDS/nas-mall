@@ -51,7 +51,6 @@ var (
 
 func InitClient() {
 	once.Do(func() {
-		commonSuite = client.Option{}
 		initProductClient()
 		initUserClient()
 		initCartClient()
@@ -68,7 +67,6 @@ func initProductClient() {
 	})
 	cbs.UpdateServiceCBConfig("shop-frontend/product/GetProduct", circuitbreak.CBConfig{Enable: true, ErrRate: 0.5, MinSample: 2})
 
-	opts = append(opts, commonSuite)
 	opts = append(
 		opts,
 		client.WithCircuitBreaker(cbs),
