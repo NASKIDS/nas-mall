@@ -429,7 +429,7 @@ spec:
           command: [ 'sh', '-c', 'until nc -z -v -w30 mysql-svc 3306; do echo waiting for database; sleep 5; done;' ]
       containers:
       - name: user
-        image: "latest"
+        image: "user:latest"
         imagePullPolicy: IfNotPresent
         resources:
           limits:
