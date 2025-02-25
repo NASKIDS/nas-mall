@@ -21,7 +21,7 @@ func NewUpdateUserService(ctx context.Context) *UpdateUserService {
 func (s *UpdateUserService) Run(req *user.UpdateUserReq) (resp *user.UpdateUserResp, err error) {
 	// Finish your business logic.
 	klog.Infof("UpdateUserReq:%+v", req)
-	// 根据 Id 查询用户
+	// 根据 Id 查询用户（若已删除则在此处退出）
 	userRow, err := model.GetById(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
 		return

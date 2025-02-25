@@ -30,12 +30,22 @@ type User struct {
 	PasswordHashed string
 }
 
+type UserFullMessage struct {
+	common.Model
+	Id             uint64 `gorm:"primary_key;AUTO_INCREMENT"`
+	Email          string `gorm:"unique"`
+	PasswordHashed string
+	CreatedAt      uint64
+	UpdatedAt      uint64
+	DeletedAt      uint64
+}
+
 func (u User) TableName() string {
 	return "user"
 }
 
 func GetByEmail(db *gorm.DB, ctx context.Context, email string) (user *User, err error) {
-	err = db.WithContext(ctx).Model(&User{}).Where(&User{Email: email}).First(&user).Error
+	err = db.WithContext(ctx).Model(&User{}).Where(&User{Email: email}).Where("deleted_at IS NULL").First(&user).Error
 	return
 }
 
@@ -44,6 +54,7 @@ func GetById(db *gorm.DB, ctx context.Context, id uint64) (*User, error) {
 	err := db.WithContext(ctx).
 		Model(&User{}).
 		Where("id = ?", id).
+		Where("deleted_at IS NULL"). // 已被删除
 		First(&user).
 		Error
 
@@ -103,8 +114,9 @@ func DeleteUser(db *gorm.DB, ctx context.Context, userID uint64) error {
 				}
 			}
 		*/
+
 		// 最后删除主表
-		if err := tx.Unscoped().Where("id = ?", userID).Delete(&User{}).Error; err != nil {
+		if err := tx.Where("id = ?", userID).Delete(&User{}).Error; err != nil {
 			return fmt.Errorf("主表删除失败: %w", err)
 		}
 

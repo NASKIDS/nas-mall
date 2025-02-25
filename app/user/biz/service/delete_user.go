@@ -29,7 +29,7 @@ func NewDeleteUserService(ctx context.Context) *DeleteUserService {
 func (s *DeleteUserService) Run(req *user.DeleteUserReq) (resp *user.DeleteUserResp, err error) {
 	// Finish your business logic.
 	klog.Infof("DeleteUserReq:%+v", req)
-	// 根据 Id 查询用户
+	// 根据 Id 查询用户（若已删除，此处退出）
 	userRow, err := model.GetById(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
 		return
