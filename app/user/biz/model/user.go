@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -32,12 +33,12 @@ type User struct {
 
 type UserFullMessage struct {
 	common.Model
-	Id             uint64 `gorm:"primary_key;AUTO_INCREMENT"`
-	Email          string `gorm:"unique"`
+	Id             uint64
+	Email          string
 	PasswordHashed string
-	CreatedAt      uint64
-	UpdatedAt      uint64
-	DeletedAt      uint64
+	CreatedAt      time.Time // 修正为 time.Time 类型
+	UpdatedAt      time.Time
+	DeletedAt      time.Time
 }
 
 func (u User) TableName() string {
@@ -61,6 +62,22 @@ func GetById(db *gorm.DB, ctx context.Context, id uint64) (*User, error) {
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("user id:%d not found", id)
 	}
+	return &user, err
+}
+
+func GetFullMessageById(db *gorm.DB, ctx context.Context, id uint64) (*UserFullMessage, error) {
+	var user UserFullMessage
+	err := db.WithContext(ctx).
+		Model(&User{}).
+		Where("id = ?", id).
+		Where("deleted_at IS NULL"). // 已被删除
+		First(&user).
+		Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("user id:%d not found", id)
+	}
+	user.Id = id
 	return &user, err
 }
 

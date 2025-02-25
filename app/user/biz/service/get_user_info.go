@@ -17,27 +17,12 @@ func NewGetUserInfoService(ctx context.Context) *GetUserInfoService {
 	return &GetUserInfoService{ctx: ctx}
 }
 
-/*
-// 获取用户身份信息
-message GetUserInfoReq {
-    uint64 user_id = 1;
-    string password = 2;  // 或使用 password 字段验证
-}
-
-message GetUserInfoResp {
-    uint64 user_id = 1;
-    string email = 2;
-    uint64 created_at = 3;
-    uint64 updated_at = 4;
-    uint64 deleted_at = 5;
-}
-*/
 // Run create note info
 func (s *GetUserInfoService) Run(req *user.GetUserInfoReq) (resp *user.GetUserInfoResp, err error) {
 	// Finish your business logic.
 	klog.Infof("GetUserInfoReq:%+v", req)
 	// 根据 Id 查询用户
-	userRow, err := model.GetById(mysql.DB, s.ctx, req.UserId)
+	userRow, err := model.GetFullMessageById(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
 		return
 	}
@@ -52,5 +37,11 @@ func (s *GetUserInfoService) Run(req *user.GetUserInfoReq) (resp *user.GetUserIn
 			return
 		}
 	}
-	return
+	return &user.GetUserInfoResp{
+		UserId:    req.UserId,
+		Email:     userRow.Email,
+		CreatedAt: uint64(userRow.CreatedAt.Unix()),
+		UpdatedAt: uint64(userRow.UpdatedAt.Unix()),
+		DeletedAt: uint64(userRow.DeletedAt.Unix()),
+	}, nil
 }
