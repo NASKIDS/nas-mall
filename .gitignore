@@ -7,3 +7,4 @@ app/**/tmp/
 app/**/kitex_gen/
 
 go.work.sum
+/data/

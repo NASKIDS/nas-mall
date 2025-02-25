@@ -17,26 +17,23 @@ package rpc
 import (
 	"sync"
 
-	"github.com/naskids/nas-mall/common/clientsuite"
-
 	"github.com/cloudwego/kitex/client"
 
+	"github.com/naskids/nas-mall/common/clientsuite"
+	rpcproduct "github.com/naskids/nas-mall/rpc_gen/rpc/product"
+
 	"github.com/naskids/nas-mall/app/cart/conf"
-	cartutils "github.com/naskids/nas-mall/app/cart/utils"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product/productcatalogservice"
 )
 
 var (
 	ProductClient productcatalogservice.Client
 	once          sync.Once
-	err           error
-	registryAddr  string
 	serviceName   string
 )
 
 func InitClient() {
 	once.Do(func() {
-		registryAddr = conf.GetConf().Registry.RegistryAddress[0]
 		serviceName = conf.GetConf().Kitex.Service
 		initProductClient()
 	})
@@ -45,11 +42,10 @@ func InitClient() {
 func initProductClient() {
 	opts := []client.Option{
 		client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			RegistryAddr:       registryAddr,
 			CurrentServiceName: serviceName,
 		}),
 	}
 
-	ProductClient, err = productcatalogservice.NewClient("product", opts...)
-	cartutils.MustHandleError(err)
+	rpcproduct.InitClient("product", opts...)
+	ProductClient = rpcproduct.DefaultClient()
 }
