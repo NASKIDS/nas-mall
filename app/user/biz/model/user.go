@@ -16,6 +16,8 @@ package model
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 
@@ -37,6 +39,42 @@ func GetByEmail(db *gorm.DB, ctx context.Context, email string) (user *User, err
 	return
 }
 
+func GetById(db *gorm.DB, ctx context.Context, id uint64) (*User, error) {
+	var user User
+	err := db.WithContext(ctx).
+		Model(&User{}).
+		Where("id = ?", id).
+		First(&user).
+		Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("user id:%d not found", id)
+	}
+	return &user, err
+}
+
 func Create(db *gorm.DB, ctx context.Context, user *User) error {
 	return db.WithContext(ctx).Create(user).Error
+}
+
+// 安全更新用户信息
+func UpdateUser(db *gorm.DB, ctx context.Context, userID uint64, updates map[string]interface{}) error {
+	if len(updates) == 0 {
+		return errors.New("更新字段不能为空")
+	}
+
+	result := db.WithContext(ctx).
+		Model(&User{}).          // 指定模型（自动识别表名）
+		Where("id = ?", userID). // 限定更新范围
+		Updates(updates)         // 传入更新字段
+
+	if result.Error != nil {
+		return fmt.Errorf("数据库更新失败: %w", result.Error)
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
