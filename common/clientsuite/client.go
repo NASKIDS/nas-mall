@@ -20,21 +20,16 @@ import (
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
-	consul "github.com/kitex-contrib/registry-consul"
+	dns "github.com/kitex-contrib/resolver-dns"
 )
 
 type CommonGrpcClientSuite struct {
 	CurrentServiceName string
-	RegistryAddr       string
 }
 
 func (s CommonGrpcClientSuite) Options() []client.Option {
-	r, err := consul.NewConsulResolver(s.RegistryAddr)
-	if err != nil {
-		panic(err)
-	}
 	opts := []client.Option{
-		client.WithResolver(r),
+		client.WithResolver(dns.NewDNSResolver()),
 		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
 		client.WithTransportProtocol(transport.GRPC),
 	}

@@ -27,6 +27,8 @@ COPY --from=builder /opt/gomall/${SVC}/server /opt/gomall/${SVC}/server
 
 COPY app/${SVC}/conf /opt/gomall/${SVC}/conf
 
+COPY app/${SVC}/script/*.sql /opt/gomall/${SVC}/script/
+
 WORKDIR /opt/gomall/${SVC}
 
 CMD ["./server"]

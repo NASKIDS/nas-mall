@@ -7,6 +7,10 @@ option go_package="/user";
 service UserService {
     rpc Register(RegisterReq) returns (RegisterResp) {}
     rpc Login(LoginReq) returns (LoginResp) {}
+    rpc Logout(LogoutReq) returns (LogoutResp) {}
+    rpc DeleteUser(DeleteUserReq) returns (DeleteUserResp) {}
+    rpc UpdateUser(UpdateUserReq) returns (UpdateUserResp) {}
+    rpc GetUserInfo(GetUserInfoReq) returns (GetUserInfoResp) {}
 }
 
 message RegisterReq {
@@ -26,4 +30,46 @@ message LoginReq {
 
 message LoginResp {
     uint64 user_id = 1;
+}
+// 用户登出
+message LogoutReq {
+    uint64 user_id = 1;
+}
+
+message LogoutResp {
+}
+
+// 删除用户
+message DeleteUserReq {
+    uint64 user_id = 1;
+    // 输入密码确认删除
+    string password = 2;
+}
+message DeleteUserResp {
+}
+
+// 更新用户
+message UpdateUserReq {
+    uint64 user_id = 1;        // 要更新的用户ID
+    string password = 2;       // 原密码（用于验证身份）
+    optional string new_email = 3;    // 新邮箱（可选更新）
+    optional string new_password = 4; // 新密码（可选更新）
+}
+message UpdateUserResp {
+    uint64 user_id = 1;        // 返回更新后的用户ID
+    string new_email = 2;      // 更新后的邮箱（若有修改）
+}
+
+// 获取用户身份信息
+message GetUserInfoReq {
+    uint64 user_id = 1;
+    string password = 2;  // 或使用 password 字段验证
+}
+
+message GetUserInfoResp {
+    uint64 user_id = 1;
+    string email = 2;
+    uint64 created_at = 3;
+    uint64 updated_at = 4;
+    uint64 deleted_at = 5;
 }

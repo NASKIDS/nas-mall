@@ -74,6 +74,7 @@ require (
 	github.com/kitex-contrib/obs-opentelemetry v0.2.6 // indirect
 	github.com/kitex-contrib/obs-opentelemetry/logging/zap v0.0.0-20240305123358-828863cc5853 // indirect
 	github.com/kitex-contrib/registry-consul v0.0.0-20230406075225-7d341f036654 // indirect
+	github.com/kitex-contrib/resolver-dns v0.1.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
