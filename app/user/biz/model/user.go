@@ -78,3 +78,36 @@ func UpdateUser(db *gorm.DB, ctx context.Context, userID uint64, updates map[str
 
 	return nil
 }
+
+// 安全删除用户信息
+func DeleteUser(db *gorm.DB, ctx context.Context, userID uint64) error {
+	return db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 验证用户存在性
+		if err := tx.First(&User{}).Where("id = ?", userID).Error; err != nil {
+			return fmt.Errorf("用户不存在: %w", err)
+		}
+		// 按依赖顺序删除关联数据
+		/*
+			associations := []struct {
+				Table    interface{}
+				Relation string
+			}{
+				{&Payment{}, "user_id"},
+				{&Order{}, "user_id"},
+				{&cart{}, "user_id"},
+			}
+
+			for _, assoc := range associations {
+				if err := tx.Unscoped().Where(assoc.Relation+" = ?", userID).Delete(assoc.Table).Error; err != nil {
+					return fmt.Errorf("删除 %T 失败: %w", assoc.Table, err)
+				}
+			}
+		*/
+		// 最后删除主表
+		if err := tx.Unscoped().Where("id = ?", userID).Delete(&User{}).Error; err != nil {
+			return fmt.Errorf("主表删除失败: %w", err)
+		}
+
+		return nil
+	})
+}
