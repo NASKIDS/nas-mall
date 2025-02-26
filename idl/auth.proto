@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "/auth";
+
+service AuthService {
+  // 颁发初始令牌
+  rpc DeliverToken(DeliverTokenReq) returns (DeliveryResp) {}
+  // 使用刷新令牌续期
+  rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp) {}
+  // 校验令牌有效性
+  rpc VerifyTokenByRPC(VerifyTokenReq) returns (VerifyResp) {}
+}
+
+message DeliverTokenReq {
+  uint64 user_id = 1;
+}
+
+message DeliveryResp {
+  string access_token = 1;
+  string refresh_token = 2; // 刷新令牌
+}
+
+message RefreshTokenReq {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResp {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message VerifyTokenReq {
+  string access_token = 1;
+}
+
+
+message VerifyResp {
+  bool valid = 1;      // 是否有效
+  uint64 user_id = 2;  // 令牌关联的用户ID
+}
