@@ -46,7 +46,8 @@ func (s *UpdateProductService) Run(req *product.UpdateProductReq) (resp *product
 
 	// 1. 获取现有商品
 	var existingProduct model.Product
-	if err = tx.First(&existingProduct, req.Id).Error; err != nil {
+	// 已被删除 或者 不存在
+	if err = tx.First(&existingProduct, req.Id).Where("deleted_at IS NULL").Error; err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("商品不存在")
 	}

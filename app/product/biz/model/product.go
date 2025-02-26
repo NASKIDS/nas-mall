@@ -28,11 +28,12 @@ import (
 
 type Product struct {
 	common.Model
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	Picture     string     `json:"picture"`
-	Price       float32    `json:"price"`
-	Categories  []Category `json:"categories" gorm:"many2many:product_category"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Picture     string         `json:"picture"`
+	Price       float32        `json:"price"`
+	Categories  []Category     `json:"categories" gorm:"many2many:product_category"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"` // 必须包含这个字段
 }
 
 func (p Product) TableName() string {
@@ -46,6 +47,9 @@ type ProductQuery struct {
 
 func (p ProductQuery) GetById(productId uint64) (product Product, err error) {
 	err = p.db.WithContext(p.ctx).Model(&Product{}).Where(&Product{Model: common.Model{ID: productId}}).First(&product).Error
+
+	// 执行查询后控制台会输出类似：
+	// SELECT * FROM `products` WHERE id = 123 AND `products`.`deleted_at` IS NULL ORDER BY `products`.`id` LIMIT 1
 	return
 }
 
