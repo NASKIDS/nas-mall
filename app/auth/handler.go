@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/naskids/nas-mall/app/auth/biz/service"
 	auth "github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
 )

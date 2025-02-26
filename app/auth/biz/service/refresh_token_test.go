@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	auth "github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
 	"testing"
+
+	auth "github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
 )
 
 func TestRefreshToken_Run(t *testing.T) {

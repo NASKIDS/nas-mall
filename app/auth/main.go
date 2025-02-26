@@ -8,10 +8,11 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	"github.com/naskids/nas-mall/app/auth/conf"
-	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth/authservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/naskids/nas-mall/app/auth/conf"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth/authservice"
 )
 
 func main() {
