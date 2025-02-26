@@ -5,15 +5,15 @@ import (
 	"errors"
 	"time"
 
+	"github.com/naskids/nas-mall/app/auth/biz/model"
 	"github.com/naskids/nas-mall/app/auth/utils/token"
 	auth "github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
-	userStore "github.com/naskids/nas-mall/rpc_gen/kitex_gen/user"
 )
 
 type DeliverTokenService struct {
 	ctx             context.Context
 	tokenMaker      token.Maker
-	userStore       userStore.UserService
+	userStore       model.AuthUser
 	tokenDuration   time.Duration
 	refreshDuration time.Duration
 } // NewDeliverTokenService new DeliverTokenService
