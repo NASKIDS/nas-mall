@@ -1,22 +1,32 @@
 package token
 
 import (
+	"aidanwo
 	"errors"
+paseto"
+	"
 	"strconv"
-	"time"
-
-	"github.com/o1egl/paseto"
 	"golang.org/x/crypto/ed25519"
+
+	"github.com/naskids/nas-mall/app/auth/biz/model"
 )
 
 type Maker struct {
-	paseto           *paseto.V2
-	accessPrivateKey ed25519.PrivateKey
-	accessPublicKey  ed25519.PublicKey
-	refreshKey       []byte
+	tokenDuration   time.Duration
+	refreshDuration time.Duration
+	userStore       model.AuthUser
 }
 
 func (m *Maker) GenerateAccessToken(userID uint64, expiry time.Duration) (string, error) {
+	accessToken := paseto.NewToken()
+	accessToken.SetIssuedAt(time.Now())
+	accessToken.SetNotBefore(time.Now())
+	accessToken.SetExpiration(time.Now().Add(2 * time.Hour))
+	accessToken.SetString()
+	accessToken.SetAudience()
+	key := paseto.NewV4SymmetricKey() // don't share this!!
+
+	encrypted := accessToken.V4Encrypt(key, nil)
 	token := paseto.JSONToken{
 		Expiration: time.Now().Add(expiry),
 	}

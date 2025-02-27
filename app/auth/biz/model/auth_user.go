@@ -8,7 +8,9 @@ type AuthUser interface {
 
 type User struct {
 	ID             uint64
+	Role           string
 	RefreshVersion uint64
 }
 
 // TODO impl
+// 要存的东西，access token 里面的验证码，角色，refresh key 里面的验证码，refresh key 的版本

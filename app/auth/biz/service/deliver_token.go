@@ -11,11 +11,9 @@ import (
 )
 
 type DeliverTokenService struct {
-	ctx             context.Context
-	tokenMaker      token.Maker
-	userStore       model.AuthUser
-	tokenDuration   time.Duration
-	refreshDuration time.Duration
+	ctx        context.Context
+	tokenMaker token.Maker
+	userStore  model.AuthUser
 } // NewDeliverTokenService new DeliverTokenService
 func NewDeliverTokenService(ctx context.Context) *DeliverTokenService {
 	return &DeliverTokenService{ctx: ctx}

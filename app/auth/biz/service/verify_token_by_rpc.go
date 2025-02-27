@@ -21,6 +21,8 @@ func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.Veri
 	if err != nil {
 		return &auth.VerifyResp{Valid: false}, nil
 	}
+	// TODO 这里要解析一下 token 中的用于远程验证的随机数：否则本地验证就已经足够
+
 	return &auth.VerifyResp{
 		Valid:  true,
 		UserId: userID,

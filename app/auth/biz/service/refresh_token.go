@@ -23,7 +23,6 @@ func NewRefreshTokenService(ctx context.Context) *RefreshTokenService {
 
 // Run create note info
 func (s *RefreshTokenService) Run(req *auth.RefreshTokenReq) (resp *auth.RefreshTokenResp, err error) {
-	// Finish your business logic.
 	// 1. 解析刷新令牌
 	userID, tokenVersion, err := s.tokenMaker.ParseRefreshToken(req.RefreshToken)
 	if err != nil {
