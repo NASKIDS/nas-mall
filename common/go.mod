@@ -11,7 +11,6 @@ require (
 	github.com/kitex-contrib/obs-opentelemetry/logging/zap v0.0.0-20240305123358-828863cc5853
 	github.com/kitex-contrib/registry-consul v0.0.0-20230406075225-7d341f036654
 	github.com/kitex-contrib/resolver-dns v0.1.0
-	github.com/o1egl/paseto v1.0.0
 	github.com/prometheus/client_golang v1.19.0
 	go.opentelemetry.io/otel v1.25.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.25.0

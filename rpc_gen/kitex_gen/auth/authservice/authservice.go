@@ -36,6 +36,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"BanUser": kitex.NewMethodInfo(
+		banUserHandler,
+		newBanUserArgs,
+		newBanUserResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -194,14 +201,14 @@ func (p *DeliverTokenArgs) GetFirstArgument() interface{} {
 }
 
 type DeliverTokenResult struct {
-	Success *auth.DeliveryResp
+	Success *auth.DeliveryTokenResp
 }
 
-var DeliverTokenResult_Success_DEFAULT *auth.DeliveryResp
+var DeliverTokenResult_Success_DEFAULT *auth.DeliveryTokenResp
 
 func (p *DeliverTokenResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetSuccess() {
-		p.Success = new(auth.DeliveryResp)
+		p.Success = new(auth.DeliveryTokenResp)
 	}
 	return p.Success.FastRead(buf, _type, number)
 }
@@ -228,7 +235,7 @@ func (p *DeliverTokenResult) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *DeliverTokenResult) Unmarshal(in []byte) error {
-	msg := new(auth.DeliveryResp)
+	msg := new(auth.DeliveryTokenResp)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -236,7 +243,7 @@ func (p *DeliverTokenResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *DeliverTokenResult) GetSuccess() *auth.DeliveryResp {
+func (p *DeliverTokenResult) GetSuccess() *auth.DeliveryTokenResp {
 	if !p.IsSetSuccess() {
 		return DeliverTokenResult_Success_DEFAULT
 	}
@@ -244,7 +251,7 @@ func (p *DeliverTokenResult) GetSuccess() *auth.DeliveryResp {
 }
 
 func (p *DeliverTokenResult) SetSuccess(x interface{}) {
-	p.Success = x.(*auth.DeliveryResp)
+	p.Success = x.(*auth.DeliveryTokenResp)
 }
 
 func (p *DeliverTokenResult) IsSetSuccess() bool {
@@ -500,14 +507,14 @@ func (p *VerifyTokenByRPCArgs) GetFirstArgument() interface{} {
 }
 
 type VerifyTokenByRPCResult struct {
-	Success *auth.VerifyResp
+	Success *auth.VerifyTokenResp
 }
 
-var VerifyTokenByRPCResult_Success_DEFAULT *auth.VerifyResp
+var VerifyTokenByRPCResult_Success_DEFAULT *auth.VerifyTokenResp
 
 func (p *VerifyTokenByRPCResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetSuccess() {
-		p.Success = new(auth.VerifyResp)
+		p.Success = new(auth.VerifyTokenResp)
 	}
 	return p.Success.FastRead(buf, _type, number)
 }
@@ -534,7 +541,7 @@ func (p *VerifyTokenByRPCResult) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *VerifyTokenByRPCResult) Unmarshal(in []byte) error {
-	msg := new(auth.VerifyResp)
+	msg := new(auth.VerifyTokenResp)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -542,7 +549,7 @@ func (p *VerifyTokenByRPCResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *VerifyTokenByRPCResult) GetSuccess() *auth.VerifyResp {
+func (p *VerifyTokenByRPCResult) GetSuccess() *auth.VerifyTokenResp {
 	if !p.IsSetSuccess() {
 		return VerifyTokenByRPCResult_Success_DEFAULT
 	}
@@ -550,7 +557,7 @@ func (p *VerifyTokenByRPCResult) GetSuccess() *auth.VerifyResp {
 }
 
 func (p *VerifyTokenByRPCResult) SetSuccess(x interface{}) {
-	p.Success = x.(*auth.VerifyResp)
+	p.Success = x.(*auth.VerifyTokenResp)
 }
 
 func (p *VerifyTokenByRPCResult) IsSetSuccess() bool {
@@ -558,6 +565,159 @@ func (p *VerifyTokenByRPCResult) IsSetSuccess() bool {
 }
 
 func (p *VerifyTokenByRPCResult) GetResult() interface{} {
+	return p.Success
+}
+
+func banUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(auth.BanUserReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(auth.AuthService).BanUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *BanUserArgs:
+		success, err := handler.(auth.AuthService).BanUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*BanUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newBanUserArgs() interface{} {
+	return &BanUserArgs{}
+}
+
+func newBanUserResult() interface{} {
+	return &BanUserResult{}
+}
+
+type BanUserArgs struct {
+	Req *auth.BanUserReq
+}
+
+func (p *BanUserArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(auth.BanUserReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *BanUserArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *BanUserArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *BanUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *BanUserArgs) Unmarshal(in []byte) error {
+	msg := new(auth.BanUserReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var BanUserArgs_Req_DEFAULT *auth.BanUserReq
+
+func (p *BanUserArgs) GetReq() *auth.BanUserReq {
+	if !p.IsSetReq() {
+		return BanUserArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *BanUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *BanUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type BanUserResult struct {
+	Success *auth.BanUserResp
+}
+
+var BanUserResult_Success_DEFAULT *auth.BanUserResp
+
+func (p *BanUserResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(auth.BanUserResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *BanUserResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *BanUserResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *BanUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *BanUserResult) Unmarshal(in []byte) error {
+	msg := new(auth.BanUserResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *BanUserResult) GetSuccess() *auth.BanUserResp {
+	if !p.IsSetSuccess() {
+		return BanUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *BanUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*auth.BanUserResp)
+}
+
+func (p *BanUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *BanUserResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -571,7 +731,7 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) DeliverToken(ctx context.Context, Req *auth.DeliverTokenReq) (r *auth.DeliveryResp, err error) {
+func (p *kClient) DeliverToken(ctx context.Context, Req *auth.DeliverTokenReq) (r *auth.DeliveryTokenResp, err error) {
 	var _args DeliverTokenArgs
 	_args.Req = Req
 	var _result DeliverTokenResult
@@ -591,11 +751,21 @@ func (p *kClient) RefreshToken(ctx context.Context, Req *auth.RefreshTokenReq) (
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq) (r *auth.VerifyResp, err error) {
+func (p *kClient) VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq) (r *auth.VerifyTokenResp, err error) {
 	var _args VerifyTokenByRPCArgs
 	_args.Req = Req
 	var _result VerifyTokenByRPCResult
 	if err = p.c.Call(ctx, "VerifyTokenByRPC", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BanUser(ctx context.Context, Req *auth.BanUserReq) (r *auth.BanUserResp, err error) {
+	var _args BanUserArgs
+	_args.Req = Req
+	var _result BanUserResult
+	if err = p.c.Call(ctx, "BanUser", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

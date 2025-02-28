@@ -11,14 +11,15 @@ replace (
 )
 
 require (
-	github.com/cloudwego/hertz v0.6.0
+	aidanwoods.dev/go-paseto v1.5.4
+	github.com/cloudwego/hertz v0.7.3
 	github.com/cloudwego/kitex v0.12.2
-	github.com/hertz-contrib/paseto v0.0.0-20230508023022-71af6635a26c
+	github.com/joho/godotenv v1.5.1
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241120035129-55da83caab1b
 	github.com/kr/pretty v0.3.1
+	github.com/naskids/nas-mall/common v0.0.0-00010101000000-000000000000
 	github.com/naskids/nas-mall/rpc_gen v0.0.0-00010101000000-000000000000
 	github.com/redis/go-redis/v9 v9.7.1
-	github.com/samber/lo v1.49.1
 	go.uber.org/zap v1.27.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/validator.v2 v2.0.1
@@ -28,7 +29,6 @@ require (
 )
 
 require (
-	aidanwoods.dev/go-paseto v1.5.4 // indirect
 	aidanwoods.dev/go-result v0.3.1 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.2 // indirect
 	github.com/bytedance/gopkg v0.1.1 // indirect
@@ -55,6 +55,7 @@ require (
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
 	github.com/henrylee2cn/ameda v1.4.10 // indirect
 	github.com/henrylee2cn/goutil v0.0.0-20210127050712-89660552f6f8 // indirect
+	github.com/hertz-contrib/paseto v0.0.0-20230508023022-71af6635a26c // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/jhump/protoreflect v1.8.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
@@ -67,6 +68,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
+	github.com/samber/lo v1.49.1 // indirect
 	github.com/sirupsen/logrus v1.9.2 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/tidwall/gjson v1.17.3 // indirect
@@ -75,7 +77,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	go.opentelemetry.io/otel v1.25.0 // indirect
 	go.opentelemetry.io/otel/trace v1.25.0 // indirect
-	go.uber.org/multierr v1.10.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.6.0 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/net v0.33.0 // indirect

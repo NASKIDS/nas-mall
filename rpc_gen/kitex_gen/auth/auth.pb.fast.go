@@ -37,7 +37,7 @@ func (x *DeliverTokenReq) fastReadField1(buf []byte, _type int8) (offset int, er
 	return offset, err
 }
 
-func (x *DeliveryResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *DeliveryTokenResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -59,15 +59,15 @@ func (x *DeliveryResp) FastRead(buf []byte, _type int8, number int32) (offset in
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_DeliveryResp[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_DeliveryTokenResp[number], err)
 }
 
-func (x *DeliveryResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+func (x *DeliveryTokenResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 	x.AccessToken, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *DeliveryResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+func (x *DeliveryTokenResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	x.RefreshToken, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
@@ -153,11 +153,11 @@ ReadFieldError:
 }
 
 func (x *VerifyTokenReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.AccessToken, offset, err = fastpb.ReadString(buf, _type)
+	x.RefreshToken, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *VerifyResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *VerifyTokenResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -179,16 +179,75 @@ func (x *VerifyResp) FastRead(buf []byte, _type int8, number int32) (offset int,
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_VerifyResp[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_VerifyTokenResp[number], err)
 }
 
-func (x *VerifyResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.Valid, offset, err = fastpb.ReadBool(buf, _type)
+func (x *VerifyTokenResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.UserId, offset, err = fastpb.ReadUint64(buf, _type)
 	return offset, err
 }
 
-func (x *VerifyResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	x.UserId, offset, err = fastpb.ReadUint64(buf, _type)
+func (x *VerifyTokenResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.Role, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *BanUserReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_BanUserReq[number], err)
+}
+
+func (x *BanUserReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	offset, err = fastpb.ReadList(buf, _type,
+		func(buf []byte, _type int8) (n int, err error) {
+			var v uint64
+			v, offset, err = fastpb.ReadUint64(buf, _type)
+			if err != nil {
+				return offset, err
+			}
+			x.UserId = append(x.UserId, v)
+			return offset, err
+		})
+	return offset, err
+}
+
+func (x *BanUserResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_BanUserResp[number], err)
+}
+
+func (x *BanUserResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.BannedCount, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
@@ -208,7 +267,7 @@ func (x *DeliverTokenReq) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *DeliveryResp) FastWrite(buf []byte) (offset int) {
+func (x *DeliveryTokenResp) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -217,7 +276,7 @@ func (x *DeliveryResp) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *DeliveryResp) fastWriteField1(buf []byte) (offset int) {
+func (x *DeliveryTokenResp) fastWriteField1(buf []byte) (offset int) {
 	if x.AccessToken == "" {
 		return offset
 	}
@@ -225,7 +284,7 @@ func (x *DeliveryResp) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *DeliveryResp) fastWriteField2(buf []byte) (offset int) {
+func (x *DeliveryTokenResp) fastWriteField2(buf []byte) (offset int) {
 	if x.RefreshToken == "" {
 		return offset
 	}
@@ -283,14 +342,14 @@ func (x *VerifyTokenReq) FastWrite(buf []byte) (offset int) {
 }
 
 func (x *VerifyTokenReq) fastWriteField1(buf []byte) (offset int) {
-	if x.AccessToken == "" {
+	if x.RefreshToken == "" {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 1, x.GetAccessToken())
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetRefreshToken())
 	return offset
 }
 
-func (x *VerifyResp) FastWrite(buf []byte) (offset int) {
+func (x *VerifyTokenResp) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -299,19 +358,56 @@ func (x *VerifyResp) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *VerifyResp) fastWriteField1(buf []byte) (offset int) {
-	if !x.Valid {
-		return offset
-	}
-	offset += fastpb.WriteBool(buf[offset:], 1, x.GetValid())
-	return offset
-}
-
-func (x *VerifyResp) fastWriteField2(buf []byte) (offset int) {
+func (x *VerifyTokenResp) fastWriteField1(buf []byte) (offset int) {
 	if x.UserId == 0 {
 		return offset
 	}
-	offset += fastpb.WriteUint64(buf[offset:], 2, x.GetUserId())
+	offset += fastpb.WriteUint64(buf[offset:], 1, x.GetUserId())
+	return offset
+}
+
+func (x *VerifyTokenResp) fastWriteField2(buf []byte) (offset int) {
+	if x.Role == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetRole())
+	return offset
+}
+
+func (x *BanUserReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *BanUserReq) fastWriteField1(buf []byte) (offset int) {
+	if len(x.UserId) == 0 {
+		return offset
+	}
+	offset += fastpb.WriteListPacked(buf[offset:], 1, len(x.GetUserId()),
+		func(buf []byte, numTagOrKey, numIdxOrVal int32) int {
+			offset := 0
+			offset += fastpb.WriteUint64(buf[offset:], numTagOrKey, x.GetUserId()[numIdxOrVal])
+			return offset
+		})
+	return offset
+}
+
+func (x *BanUserResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *BanUserResp) fastWriteField1(buf []byte) (offset int) {
+	if x.BannedCount == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt32(buf[offset:], 1, x.GetBannedCount())
 	return offset
 }
 
@@ -331,7 +427,7 @@ func (x *DeliverTokenReq) sizeField1() (n int) {
 	return n
 }
 
-func (x *DeliveryResp) Size() (n int) {
+func (x *DeliveryTokenResp) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -340,7 +436,7 @@ func (x *DeliveryResp) Size() (n int) {
 	return n
 }
 
-func (x *DeliveryResp) sizeField1() (n int) {
+func (x *DeliveryTokenResp) sizeField1() (n int) {
 	if x.AccessToken == "" {
 		return n
 	}
@@ -348,7 +444,7 @@ func (x *DeliveryResp) sizeField1() (n int) {
 	return n
 }
 
-func (x *DeliveryResp) sizeField2() (n int) {
+func (x *DeliveryTokenResp) sizeField2() (n int) {
 	if x.RefreshToken == "" {
 		return n
 	}
@@ -406,14 +502,14 @@ func (x *VerifyTokenReq) Size() (n int) {
 }
 
 func (x *VerifyTokenReq) sizeField1() (n int) {
-	if x.AccessToken == "" {
+	if x.RefreshToken == "" {
 		return n
 	}
-	n += fastpb.SizeString(1, x.GetAccessToken())
+	n += fastpb.SizeString(1, x.GetRefreshToken())
 	return n
 }
 
-func (x *VerifyResp) Size() (n int) {
+func (x *VerifyTokenResp) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -422,19 +518,56 @@ func (x *VerifyResp) Size() (n int) {
 	return n
 }
 
-func (x *VerifyResp) sizeField1() (n int) {
-	if !x.Valid {
-		return n
-	}
-	n += fastpb.SizeBool(1, x.GetValid())
-	return n
-}
-
-func (x *VerifyResp) sizeField2() (n int) {
+func (x *VerifyTokenResp) sizeField1() (n int) {
 	if x.UserId == 0 {
 		return n
 	}
-	n += fastpb.SizeUint64(2, x.GetUserId())
+	n += fastpb.SizeUint64(1, x.GetUserId())
+	return n
+}
+
+func (x *VerifyTokenResp) sizeField2() (n int) {
+	if x.Role == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetRole())
+	return n
+}
+
+func (x *BanUserReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *BanUserReq) sizeField1() (n int) {
+	if len(x.UserId) == 0 {
+		return n
+	}
+	n += fastpb.SizeListPacked(1, len(x.GetUserId()),
+		func(numTagOrKey, numIdxOrVal int32) int {
+			n := 0
+			n += fastpb.SizeUint64(numTagOrKey, x.GetUserId()[numIdxOrVal])
+			return n
+		})
+	return n
+}
+
+func (x *BanUserResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *BanUserResp) sizeField1() (n int) {
+	if x.BannedCount == 0 {
+		return n
+	}
+	n += fastpb.SizeInt32(1, x.GetBannedCount())
 	return n
 }
 
@@ -442,7 +575,7 @@ var fieldIDToName_DeliverTokenReq = map[int32]string{
 	1: "UserId",
 }
 
-var fieldIDToName_DeliveryResp = map[int32]string{
+var fieldIDToName_DeliveryTokenResp = map[int32]string{
 	1: "AccessToken",
 	2: "RefreshToken",
 }
@@ -457,10 +590,18 @@ var fieldIDToName_RefreshTokenResp = map[int32]string{
 }
 
 var fieldIDToName_VerifyTokenReq = map[int32]string{
-	1: "AccessToken",
+	1: "RefreshToken",
 }
 
-var fieldIDToName_VerifyResp = map[int32]string{
-	1: "Valid",
-	2: "UserId",
+var fieldIDToName_VerifyTokenResp = map[int32]string{
+	1: "UserId",
+	2: "Role",
+}
+
+var fieldIDToName_BanUserReq = map[int32]string{
+	1: "UserId",
+}
+
+var fieldIDToName_BanUserResp = map[int32]string{
+	1: "BannedCount",
 }

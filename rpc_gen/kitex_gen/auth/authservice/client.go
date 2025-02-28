@@ -11,9 +11,10 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	DeliverToken(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryResp, err error)
+	DeliverToken(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryTokenResp, err error)
 	RefreshToken(ctx context.Context, Req *auth.RefreshTokenReq, callOptions ...callopt.Option) (r *auth.RefreshTokenResp, err error)
-	VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyResp, err error)
+	VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyTokenResp, err error)
+	BanUser(ctx context.Context, Req *auth.BanUserReq, callOptions ...callopt.Option) (r *auth.BanUserResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -45,7 +46,7 @@ type kAuthServiceClient struct {
 	*kClient
 }
 
-func (p *kAuthServiceClient) DeliverToken(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryResp, err error) {
+func (p *kAuthServiceClient) DeliverToken(ctx context.Context, Req *auth.DeliverTokenReq, callOptions ...callopt.Option) (r *auth.DeliveryTokenResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DeliverToken(ctx, Req)
 }
@@ -55,7 +56,12 @@ func (p *kAuthServiceClient) RefreshToken(ctx context.Context, Req *auth.Refresh
 	return p.kClient.RefreshToken(ctx, Req)
 }
 
-func (p *kAuthServiceClient) VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyResp, err error) {
+func (p *kAuthServiceClient) VerifyTokenByRPC(ctx context.Context, Req *auth.VerifyTokenReq, callOptions ...callopt.Option) (r *auth.VerifyTokenResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.VerifyTokenByRPC(ctx, Req)
+}
+
+func (p *kAuthServiceClient) BanUser(ctx context.Context, Req *auth.BanUserReq, callOptions ...callopt.Option) (r *auth.BanUserResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.BanUser(ctx, Req)
 }

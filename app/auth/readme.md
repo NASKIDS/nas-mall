@@ -24,3 +24,8 @@
 sh build.sh
 sh output/bootstrap.sh
 ```
+## 生成非对称密钥和对称密钥
+** .env 文件中的密钥千万不要传到代码仓中，必须通过secret, ci variable 等方式部署到环境中**
+```shell
+go run cmd/key-gen.go > .env
+```
