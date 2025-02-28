@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/naskids/nas-mall/app/auth/biz/service"
 	auth "github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
@@ -14,7 +13,7 @@ type AuthServiceImpl struct{}
 // DeliverToken implements the AuthServiceImpl interface.
 func (s *AuthServiceImpl) DeliverToken(ctx context.Context, req *auth.DeliverTokenReq) (resp *auth.DeliveryTokenResp, err error) {
 	resp, err = service.NewDeliverTokenService(ctx).Run(req)
-	fmt.Printf("eeee")
+
 	return resp, err
 }
 

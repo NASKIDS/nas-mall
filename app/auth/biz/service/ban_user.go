@@ -17,7 +17,13 @@ func NewBanUserService(ctx context.Context) *BanUserService {
 
 // Run create note info
 func (s *BanUserService) Run(req *auth.BanUserReq) (resp *auth.BanUserResp, err error) {
-	// Finish your business logic.
+	ids := req.UserIds
+	for _, id := range ids {
+		// 加入用户黑名单
 
+		// 删除token白名单
+
+		// 删除用户 auth 信息
+	}
 	return
 }

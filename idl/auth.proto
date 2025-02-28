@@ -6,18 +6,20 @@ option go_package = "/auth";
 
 service AuthService {
   // 颁发初始令牌
-  rpc DeliverToken(DeliverTokenReq) returns (DeliveryResp) {}
+  rpc DeliverToken(DeliverTokenReq) returns (DeliveryTokenResp) {}
   // 使用刷新令牌续期
   rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp) {}
   // 校验令牌有效性
-  rpc VerifyTokenByRPC(VerifyTokenReq) returns (VerifyResp) {}
+  rpc VerifyTokenByRPC(VerifyTokenReq) returns (VerifyTokenResp) {}
+  // 封禁用户
+  rpc BanUser(BanUserReq) returns (BanUserResp) {}
 }
 
 message DeliverTokenReq {
   uint64 user_id = 1;
 }
 
-message DeliveryResp {
+message DeliveryTokenResp {
   string access_token = 1;
   string refresh_token = 2; // 刷新令牌
 }
@@ -36,7 +38,14 @@ message VerifyTokenReq {
 }
 
 
-message VerifyResp {
-  bool valid = 1;      // 是否有效
-  uint64 user_id = 2;  // 令牌关联的用户ID
+message VerifyTokenResp {
+  bool is_valid = 1;
+}
+
+message BanUserReq {
+  repeated uint64 user_ids = 1;
+}
+
+message BanUserResp {
+  int32 banned_count = 1;
 }

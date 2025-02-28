@@ -20,7 +20,7 @@ var (
 )
 
 // TODO impl
-// 要存的东西，access token， 角色，refresh key ，refresh key 的版本
+// 要存的东西，access token， 角色，refresh key ，refresh key 的版本, refresh key 黑名单（缓存）， access Key 白名单
 
 func DefaultAuthUserStore() AuthUserStore {
 	once.Do(func() {

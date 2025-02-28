@@ -153,7 +153,7 @@ ReadFieldError:
 }
 
 func (x *VerifyTokenReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.RefreshToken, offset, err = fastpb.ReadString(buf, _type)
+	x.AccessToken, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
@@ -161,11 +161,6 @@ func (x *VerifyTokenResp) FastRead(buf []byte, _type int8, number int32) (offset
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 2:
-		offset, err = x.fastReadField2(buf, _type)
 		if err != nil {
 			goto ReadFieldError
 		}
@@ -183,12 +178,7 @@ ReadFieldError:
 }
 
 func (x *VerifyTokenResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.UserId, offset, err = fastpb.ReadUint64(buf, _type)
-	return offset, err
-}
-
-func (x *VerifyTokenResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	x.Role, offset, err = fastpb.ReadString(buf, _type)
+	x.IsValid, offset, err = fastpb.ReadBool(buf, _type)
 	return offset, err
 }
 
@@ -220,7 +210,7 @@ func (x *BanUserReq) fastReadField1(buf []byte, _type int8) (offset int, err err
 			if err != nil {
 				return offset, err
 			}
-			x.UserId = append(x.UserId, v)
+			x.UserIds = append(x.UserIds, v)
 			return offset, err
 		})
 	return offset, err
@@ -342,10 +332,10 @@ func (x *VerifyTokenReq) FastWrite(buf []byte) (offset int) {
 }
 
 func (x *VerifyTokenReq) fastWriteField1(buf []byte) (offset int) {
-	if x.RefreshToken == "" {
+	if x.AccessToken == "" {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 1, x.GetRefreshToken())
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetAccessToken())
 	return offset
 }
 
@@ -354,23 +344,14 @@ func (x *VerifyTokenResp) FastWrite(buf []byte) (offset int) {
 		return offset
 	}
 	offset += x.fastWriteField1(buf[offset:])
-	offset += x.fastWriteField2(buf[offset:])
 	return offset
 }
 
 func (x *VerifyTokenResp) fastWriteField1(buf []byte) (offset int) {
-	if x.UserId == 0 {
+	if !x.IsValid {
 		return offset
 	}
-	offset += fastpb.WriteUint64(buf[offset:], 1, x.GetUserId())
-	return offset
-}
-
-func (x *VerifyTokenResp) fastWriteField2(buf []byte) (offset int) {
-	if x.Role == "" {
-		return offset
-	}
-	offset += fastpb.WriteString(buf[offset:], 2, x.GetRole())
+	offset += fastpb.WriteBool(buf[offset:], 1, x.GetIsValid())
 	return offset
 }
 
@@ -383,13 +364,13 @@ func (x *BanUserReq) FastWrite(buf []byte) (offset int) {
 }
 
 func (x *BanUserReq) fastWriteField1(buf []byte) (offset int) {
-	if len(x.UserId) == 0 {
+	if len(x.UserIds) == 0 {
 		return offset
 	}
-	offset += fastpb.WriteListPacked(buf[offset:], 1, len(x.GetUserId()),
+	offset += fastpb.WriteListPacked(buf[offset:], 1, len(x.GetUserIds()),
 		func(buf []byte, numTagOrKey, numIdxOrVal int32) int {
 			offset := 0
-			offset += fastpb.WriteUint64(buf[offset:], numTagOrKey, x.GetUserId()[numIdxOrVal])
+			offset += fastpb.WriteUint64(buf[offset:], numTagOrKey, x.GetUserIds()[numIdxOrVal])
 			return offset
 		})
 	return offset
@@ -502,10 +483,10 @@ func (x *VerifyTokenReq) Size() (n int) {
 }
 
 func (x *VerifyTokenReq) sizeField1() (n int) {
-	if x.RefreshToken == "" {
+	if x.AccessToken == "" {
 		return n
 	}
-	n += fastpb.SizeString(1, x.GetRefreshToken())
+	n += fastpb.SizeString(1, x.GetAccessToken())
 	return n
 }
 
@@ -514,23 +495,14 @@ func (x *VerifyTokenResp) Size() (n int) {
 		return n
 	}
 	n += x.sizeField1()
-	n += x.sizeField2()
 	return n
 }
 
 func (x *VerifyTokenResp) sizeField1() (n int) {
-	if x.UserId == 0 {
+	if !x.IsValid {
 		return n
 	}
-	n += fastpb.SizeUint64(1, x.GetUserId())
-	return n
-}
-
-func (x *VerifyTokenResp) sizeField2() (n int) {
-	if x.Role == "" {
-		return n
-	}
-	n += fastpb.SizeString(2, x.GetRole())
+	n += fastpb.SizeBool(1, x.GetIsValid())
 	return n
 }
 
@@ -543,13 +515,13 @@ func (x *BanUserReq) Size() (n int) {
 }
 
 func (x *BanUserReq) sizeField1() (n int) {
-	if len(x.UserId) == 0 {
+	if len(x.UserIds) == 0 {
 		return n
 	}
-	n += fastpb.SizeListPacked(1, len(x.GetUserId()),
+	n += fastpb.SizeListPacked(1, len(x.GetUserIds()),
 		func(numTagOrKey, numIdxOrVal int32) int {
 			n := 0
-			n += fastpb.SizeUint64(numTagOrKey, x.GetUserId()[numIdxOrVal])
+			n += fastpb.SizeUint64(numTagOrKey, x.GetUserIds()[numIdxOrVal])
 			return n
 		})
 	return n
@@ -590,16 +562,15 @@ var fieldIDToName_RefreshTokenResp = map[int32]string{
 }
 
 var fieldIDToName_VerifyTokenReq = map[int32]string{
-	1: "RefreshToken",
+	1: "AccessToken",
 }
 
 var fieldIDToName_VerifyTokenResp = map[int32]string{
-	1: "UserId",
-	2: "Role",
+	1: "IsValid",
 }
 
 var fieldIDToName_BanUserReq = map[int32]string{
-	1: "UserId",
+	1: "UserIds",
 }
 
 var fieldIDToName_BanUserResp = map[int32]string{

@@ -58,6 +58,7 @@ func (s *RefreshTokenService) Run(req *auth.RefreshTokenReq) (resp *auth.Refresh
 		return nil, fmt.Errorf("failed to update token: [%w]", err)
 	}
 
+	// 4. 持久化
 	return &auth.RefreshTokenResp{
 		AccessToken:  newAccess,
 		RefreshToken: newRefresh,
