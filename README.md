@@ -1,4 +1,4 @@
-# Gomall
+# Nas-Mall
 ![build](https://github.com/NASKIDS/nas-mall/actions/workflows/go.yml/badge.svg)
 ![GitHub stars](https://img.shields.io/github/stars/NASKIDS/nas-mall/?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/NASKIDS/nas-mall/?style=social)
@@ -9,7 +9,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/NASKIDS/nas-mall/?color=red)
 [中文](README_cn.md)
 
-This is a teaching project for newbie using CloudWeGo
+our project for Youth Training Camp
 
 ## Technology Stack
 | technology | introduce |
@@ -23,21 +23,11 @@ This is a teaching project for newbie using CloudWeGo
 | ES            | -  |
 | Prometheus    | -  |
 | Jaeger        | -  |
-| Docker        | -  |
+| K8S        | -  |
 
 
 ## Biz Logic
-- [x] The pages check auth
-- [x] Register
-- [x] Login
-- [x] Logout
-- [x] Product categories
-- [x] Products
-- [x] Add to cart
-- [x] The number badge of cart products
-- [x] Checkout
-- [x] Payment
-- [x] Orders center
+
 
 ## How to use
 ### Prepare 
