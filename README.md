@@ -1,4 +1,11 @@
 # Gomall
+![GitHub stars](https://img.shields.io/github/stars/NASKIDS/nas-mall/?style=social)
+![GitHub forks](https://img.shields.io/github/forks/NASKIDS/nas-mall/?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/NASKIDS/nas-mall/?style=social)
+![GitHub repo size](https://img.shields.io/github/repo-size/NASKIDS/nas-mall/)
+![GitHub language count](https://img.shields.io/github/languages/count/NASKIDS/nas-mall/)
+![GitHub top language](https://img.shields.io/github/languages/top/NASKIDS/nas-mall/)
+![GitHub last commit](https://img.shields.io/github/last-commit/NASKIDS/nas-mall/?color=red)
 [中文](README_cn.md)
 
 This is a teaching project for newbie using CloudWeGo
