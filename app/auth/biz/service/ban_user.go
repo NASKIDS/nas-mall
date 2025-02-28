@@ -22,7 +22,7 @@ func (s *BanUserService) Run(req *auth.BanUserReq) (resp *auth.BanUserResp, err 
 	ids := req.UserIds
 	for _, id := range ids {
 		// 加入用户黑名单
-		klog.Println(id)
+		klog.Info(id)
 		// 删除token白名单
 
 		// 删除用户 auth 信息
