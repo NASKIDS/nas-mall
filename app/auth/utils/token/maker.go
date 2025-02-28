@@ -1,67 +1,91 @@
 package token
 
 import (
-	"aidanwo
-	"errors"
-paseto"
-	"
-	"strconv"
-	"golang.org/x/crypto/ed25519"
+	"time"
+
+	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/samber/lo"
+
+	"github.com/hertz-contrib/paseto"
 
 	"github.com/naskids/nas-mall/app/auth/biz/model"
 )
 
+const (
+	defaultSymmetricKey = "707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f"
+	DefaultPublicKey    = "1eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2"
+	defaultPrivateKey   = "b4cbfb43df4ce210727d953e4a713307fa19bb7d9f85041438d9e11b942a37741eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2"
+	defaultImplicit     = "2025-nasmall-implicit"
+	issuer              = "nasmall-issuer"
+)
+
 type Maker struct {
-	tokenDuration   time.Duration
-	refreshDuration time.Duration
-	userStore       model.AuthUser
+	accessKeyDuration     time.Duration
+	refreshKeyDuration    time.Duration
+	genAccessTokenFunc    paseto.GenTokenFunc
+	genRefreshTokenFunc   paseto.GenTokenFunc
+	parseAccessTokenFunc  paseto.ParseFunc
+	parseRefreshTokenFunc paseto.ParseFunc
+	userStore             model.AuthUser
 }
 
-func (m *Maker) GenerateAccessToken(userID uint64, expiry time.Duration) (string, error) {
-	accessToken := paseto.NewToken()
-	accessToken.SetIssuedAt(time.Now())
-	accessToken.SetNotBefore(time.Now())
-	accessToken.SetExpiration(time.Now().Add(2 * time.Hour))
-	accessToken.SetString()
-	accessToken.SetAudience()
-	key := paseto.NewV4SymmetricKey() // don't share this!!
-
-	encrypted := accessToken.V4Encrypt(key, nil)
-	token := paseto.JSONToken{
-		Expiration: time.Now().Add(expiry),
+func NewMaker() *Maker {
+	genAccessTokenFunc := lo.Must(paseto.NewV4SignFunc(defaultPrivateKey, []byte(defaultImplicit)))
+	genRefreshTokenFunc := lo.Must(paseto.NewV4EncryptFunc(defaultSymmetricKey, []byte(defaultImplicit)))
+	parseAccessTokenFunc := lo.Must(paseto.NewV4PublicParseFunc(DefaultPublicKey, []byte(paseto.DefaultImplicit), paseto.WithIssuer(issuer)))
+	parseRefreshTokenFunc := lo.Must(paseto.NewV4LocalParseFunc(defaultSymmetricKey, []byte(paseto.DefaultImplicit), paseto.WithIssuer(issuer)))
+	return &Maker{
+		15 * time.Minute,
+		24 * time.Hour,
+		genAccessTokenFunc,
+		genRefreshTokenFunc,
+		parseAccessTokenFunc,
+		parseRefreshTokenFunc,
+		nil,
 	}
-	token.Set("user_id", strconv.FormatUint(userID, 10))
-	return m.paseto.Sign(m.accessPrivateKey, token, nil)
 }
 
-func (m *Maker) GenerateRefreshToken(userID, version uint64, expiry time.Duration) (string, error) {
-	token := paseto.JSONToken{
-		Expiration: time.Now().Add(expiry),
-	}
-	token.Set("user_id", strconv.FormatUint(userID, 10))
-	token.Set("refresh_version", strconv.FormatUint(version, 10))
-	return m.paseto.Encrypt(m.refreshKey, token, nil)
-}
-
-func (m *Maker) ParseAccessToken(token string) (userID uint64, err error) {
-	var parsedToken paseto.JSONToken
-	err = m.paseto.Verify(token, m.accessPublicKey, &parsedToken, nil)
+func (m *Maker) GenerateAccessToken(customClaims utils.H) (string, error) {
+	now := time.Now()
+	token, err := m.genAccessTokenFunc(&paseto.StandardClaims{
+		Issuer:    "nasmall-issuer",
+		ExpiredAt: now.Add(m.accessKeyDuration),
+		NotBefore: now,
+		IssuedAt:  now,
+	}, customClaims, nil)
 	if err != nil {
-		return 0, err
+		klog.Error("generate token failed")
 	}
-	userID, err = strconv.ParseUint(parsedToken.Get("user_id"), 10, 64)
-	return
+	return token, nil
 }
 
-func (m *Maker) ParseRefreshToken(token string) (userID, version uint64, err error) {
-	var parsedToken paseto.JSONToken
-	err = m.paseto.Decrypt(token, m.refreshKey, &parsedToken, nil)
+func (m *Maker) GenerateRefreshToken(customClaims utils.H) (string, error) {
+	now := time.Now()
+	token, err := m.genAccessTokenFunc(&paseto.StandardClaims{
+		Issuer:    issuer,
+		ExpiredAt: now.Add(m.refreshKeyDuration),
+		NotBefore: now,
+		IssuedAt:  now,
+	}, customClaims, nil)
 	if err != nil {
-		return 0, 0, err
+		klog.Error("generate token failed")
 	}
-	userID, err = strconv.ParseUint(parsedToken.Get("user_id"), 10, 64)
-	var err2 error
-	version, err2 = strconv.ParseUint(parsedToken.Get("refresh_version"), 10, 64)
-	err = errors.Join(err2, err)
-	return
+	return token, nil
+}
+
+func (m *Maker) ParseAccessToken(tokenStr string) (claims utils.H, err error) {
+	token, err := m.parseAccessTokenFunc(tokenStr)
+	if err != nil {
+		return nil, err
+	}
+	return token.Claims(), nil
+}
+
+func (m *Maker) ParseRefreshToken(tokenStr string) (claims utils.H, err error) {
+	token, err := m.parseRefreshTokenFunc(tokenStr)
+	if err != nil {
+		return
+	}
+	return token.Claims(), nil
 }
