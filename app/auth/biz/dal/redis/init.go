@@ -8,9 +8,7 @@ import (
 	"github.com/naskids/nas-mall/app/auth/conf"
 )
 
-var (
-	RedisClient *redis.Client
-)
+var RedisClient *redis.Client
 
 func Init() {
 	RedisClient = redis.NewClient(&redis.Options{

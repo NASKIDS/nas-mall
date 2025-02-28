@@ -15,7 +15,6 @@ type VerifyTokenByRPCService struct {
 	userStore  model.AuthUserStore
 } // NewVerifyTokenByRPCService new VerifyTokenByRPCService
 func NewVerifyTokenByRPCService(ctx context.Context) *VerifyTokenByRPCService {
-
 	return &VerifyTokenByRPCService{ctx: ctx, tokenMaker: token.DefaultMaker(), userStore: model.DefaultAuthUserStore()}
 }
 

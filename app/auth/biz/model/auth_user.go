@@ -31,20 +31,19 @@ func DefaultAuthUserStore() AuthUserStore {
 
 var _ AuthUserStore = &AuthUserStoreImpl{}
 
-type AuthUserStoreImpl struct {
-}
+type AuthUserStoreImpl struct{}
 
 func (a *AuthUserStoreImpl) GetUser(id uint64) (user User, err error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (a *AuthUserStoreImpl) UpdateRefreshVersion(id uint64, i any) error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (a *AuthUserStoreImpl) GetRefreshVersion(id uint64) (uint64, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
