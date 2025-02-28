@@ -41,7 +41,7 @@ func (s *DeliverTokenService) Run(req *auth.DeliverTokenReq) (resp *auth.Deliver
 		return nil, fmt.Errorf("refresh token gen err: [%w]", err)
 	}
 
-	// TODO 3. 持久化
+	// TODO 3. 持久化 token 到 redis
 	return &auth.DeliveryTokenResp{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
