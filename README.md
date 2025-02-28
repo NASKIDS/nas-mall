@@ -1,6 +1,5 @@
 # Gomall
-![build]
-(https://github.com/NASKIDS/nas-mall/actions/workflows/go.yml/badge.svg)
+![build](https://github.com/NASKIDS/nas-mall/actions/workflows/go.yml/badge.svg)
 ![GitHub stars](https://img.shields.io/github/stars/NASKIDS/nas-mall/?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/NASKIDS/nas-mall/?style=social)
 ![GitHub watchers](https://img.shields.io/github/watchers/NASKIDS/nas-mall/?style=social)
