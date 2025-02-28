@@ -1,6 +1,8 @@
 # Nas-Mall
-![build](https://github.com/NASKIDS/nas-mall/actions/workflows/go.yml/badge.svg)
 [中文](README_cn.md)
+
+![build](https://github.com/NASKIDS/nas-mall/actions/workflows/go.yml/badge.svg)
+
 
 our project for Youth Training Camp
 
