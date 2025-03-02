@@ -25,6 +25,7 @@ import (
 
 	"github.com/naskids/nas-mall/app/payment/biz/dal"
 	"github.com/naskids/nas-mall/app/payment/conf"
+	"github.com/naskids/nas-mall/app/payment/infra/rpc"
 	"github.com/naskids/nas-mall/app/payment/middleware"
 	"github.com/naskids/nas-mall/common/mtl"
 	"github.com/naskids/nas-mall/common/serversuite"
@@ -44,6 +45,7 @@ func main() {
 	})
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+	rpc.InitClient()
 	dal.Init()
 	opts := kitexInit()
 

@@ -54,6 +54,7 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 	if err != nil {
 		return nil, err
 	}
+
 	err = model.CreatePaymentLog(mysql.DB, s.ctx, &model.PaymentLog{
 		UserId:        req.UserId,
 		OrderId:       req.OrderId,
