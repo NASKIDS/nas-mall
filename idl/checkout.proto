@@ -31,3 +31,7 @@ message CheckoutResp {
   string order_id = 1;
   string transaction_id = 2;
 }
+message CancelChargeReq {
+  string order_id = 1;
+  uint64 user_id = 2;
+}
