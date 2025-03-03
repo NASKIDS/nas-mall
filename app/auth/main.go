@@ -36,7 +36,6 @@ func main() {
 	token.InitTokenMaker()
 	middleware.InitACL()
 
-	_ = middleware.E.SavePolicy()
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)
