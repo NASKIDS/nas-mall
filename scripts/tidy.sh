@@ -1,5 +1,4 @@
 #!/bin/bash
-set -ex
 
 . scripts/list_app.sh
 
