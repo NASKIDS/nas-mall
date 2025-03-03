@@ -3,18 +3,75 @@ package middleware
 import (
 	"context"
 	"errors"
-	"math/rand"
+	"fmt"
 
+	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/casbin/casbin"
+	"github.com/casbin/redis-watcher/v2"
 	"github.com/cloudwego/kitex/pkg/acl"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/pkg/utils/kitexutil"
+	"github.com/redis/go-redis/v9"
+
+	"github.com/naskids/nas-mall/app/auth/conf"
+	"github.com/naskids/nas-mall/common/token"
 )
 
 var errRejected = errors.New("casbin rejected")
+var errNoMethod = errors.New("no method")
+var E *casbin.Enforcer
 
 func reject(ctx context.Context, request interface{}) (reason error) {
-	if rand.Intn(100) == 0 {
-		return errRejected // 拒绝请求时，需要返回一个错误
+	accessToken, _ := metainfo.GetValue(ctx, "access_token")
+	var role string
+	if accessToken != "" {
+		claims, err := token.VerifyAccessToken(accessToken)
+		if err != nil {
+			// access token 无效
+			return err
+		}
+		role = claims["rol"].(string)
+	} else {
+		role = "anonymous"
 	}
+
+	method, ok1 := kitexutil.GetMethod(ctx)
+	svcName, ok2 := kitexutil.GetIDLServiceName(ctx)
+	if !ok1 || !ok2 {
+		return errNoMethod
+	}
+	if !E.Enforce(role, fmt.Sprintf("%s/%s", svcName, method), "CALL") {
+		return errRejected
+	}
+
 	return nil
 }
 
 var ACL = acl.NewACLMiddleware([]acl.RejectFunc{reject})
+
+func InitACL() {
+	w, _ := rediswatcher.NewWatcher(conf.GetConf().Redis.Address, rediswatcher.WatcherOptions{
+		Options: redis.Options{
+			Network:  "tcp",
+			Password: "",
+		},
+		Channel: "/casbin",
+	})
+
+	m := casbin.NewModel()
+	m.AddDef("r", "r", "sub, obj, act")
+	m.AddDef("p", "p", "sub, obj, act")
+	m.AddDef("g", "g", "_, _")
+	m.AddDef("e", "e", "some(where (p.eft == allow))")
+	m.AddDef("m", "m", "g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)")
+
+	E = casbin.NewEnforcer(m)
+
+	E.SetWatcher(w)
+	err := w.SetUpdateCallback(updateCallback)
+	klog.Errorf("init enforcer failed : %s", err)
+}
+
+func updateCallback(msg string) {
+	klog.Info(msg)
+}

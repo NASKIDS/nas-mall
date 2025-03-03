@@ -34,7 +34,9 @@ func main() {
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	dal.Init()
 	token.InitTokenMaker()
+	middleware.InitACL()
 
+	_ = middleware.E.SavePolicy()
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)
