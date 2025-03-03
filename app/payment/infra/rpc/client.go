@@ -18,9 +18,12 @@ import (
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/cloudwego/kitex/pkg/transmeta"
+	"github.com/cloudwego/kitex/transport"
+	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 
 	"github.com/naskids/nas-mall/app/payment/conf"
-	"github.com/naskids/nas-mall/common/clientsuite"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
 	rpcorder "github.com/naskids/nas-mall/rpc_gen/rpc/order"
 )
@@ -38,9 +41,29 @@ func InitClient() {
 	})
 }
 
+type OrderClientSuite struct {
+	CurrentServiceName string
+}
+
+func (s OrderClientSuite) Options() []client.Option {
+	opts := []client.Option{
+		client.WithHostPorts("192.168.18.133:8886"),
+		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
+		client.WithTransportProtocol(transport.GRPC),
+	}
+
+	opts = append(opts,
+		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
+			ServiceName: s.CurrentServiceName,
+		}),
+		client.WithSuite(tracing.NewClientSuite()),
+	)
+
+	return opts
+}
 func initOrderClient() {
 	opts := []client.Option{
-		client.WithSuite(clientsuite.CommonGrpcClientSuite{
+		client.WithSuite(OrderClientSuite{
 			CurrentServiceName: serviceName,
 		}),
 	}

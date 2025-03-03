@@ -19,6 +19,7 @@ type RPCClient interface {
 	DeleteOrder(ctx context.Context, Req *order.DeleteOrderReq, callOptions ...callopt.Option) (r *order.DeleteOrderResp, err error)
 	GetOrderByID(ctx context.Context, Req *order.GetOrderReq, callOptions ...callopt.Option) (r *order.GetOrderResp, err error)
 	GetOrderStatus(ctx context.Context, Req *order.GetOrderStatusReq, callOptions ...callopt.Option) (r *order.GetOrderStatusResp, err error)
+	ScheduledOrderCancel(ctx context.Context, Req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (r *order.ScheduledOrderCancelResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -73,4 +74,8 @@ func (c *clientImpl) GetOrderByID(ctx context.Context, Req *order.GetOrderReq, c
 
 func (c *clientImpl) GetOrderStatus(ctx context.Context, Req *order.GetOrderStatusReq, callOptions ...callopt.Option) (r *order.GetOrderStatusResp, err error) {
 	return c.kitexClient.GetOrderStatus(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) ScheduledOrderCancel(ctx context.Context, Req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (r *order.ScheduledOrderCancelResp, err error) {
+	return c.kitexClient.ScheduledOrderCancel(ctx, Req, callOptions...)
 }

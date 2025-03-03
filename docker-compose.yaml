@@ -7,11 +7,14 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
+      - mysql-data:/var/lib/mysql
       - ./db/sql/ini:/docker-entrypoint-initdb.d
   redis:
     image: 'redis:latest'
     ports:
       - 6379:6379
+    volumes:
+      - redis-data:/var/lib/redis
   consul:
     image: "hashicorp/consul:latest"
     ports:
@@ -43,10 +46,10 @@ services:
       - 2380:2380
   nats:
     image: nats:latest
+    command: "-js -m 8222"
     ports:
       - "4222:4222"
       - "8222:8222"
-
   grafana:
     image: grafana/grafana:latest
     environment:
@@ -70,3 +73,6 @@ services:
       - ./deploy/config/promtail.yml:/etc/promtail/config.yml
       - ./app/frontend/log:/logs/frontend
     command: -config.file=/etc/promtail/config.yml
+volumes:
+  mysql-data:
+  redis-data:

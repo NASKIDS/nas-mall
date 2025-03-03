@@ -28,6 +28,7 @@ import (
 
 	"github.com/naskids/nas-mall/app/order/biz/dal"
 	"github.com/naskids/nas-mall/app/order/conf"
+	"github.com/naskids/nas-mall/app/order/infra/mq"
 	"github.com/naskids/nas-mall/common/mtl"
 	"github.com/naskids/nas-mall/common/utils"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
@@ -47,6 +48,14 @@ func main() {
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	dal.Init()
 	opts := kitexInit()
+
+	// 初始化NATS和JetStream
+	mq.Init()
+
+	// 启动订单取消消费者
+	if err := mq.InitOrderCancelConsumer(); err != nil {
+		klog.Fatalf("初始化订单取消消费者失败: %v", err)
+	}
 
 	svr := orderservice.NewServer(new(OrderServiceImpl), opts...)
 

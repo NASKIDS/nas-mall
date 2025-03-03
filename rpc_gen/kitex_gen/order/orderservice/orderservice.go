@@ -64,6 +64,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"ScheduledOrderCancel": kitex.NewMethodInfo(
+		scheduledOrderCancelHandler,
+		newScheduledOrderCancelArgs,
+		newScheduledOrderCancelResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -1201,6 +1208,159 @@ func (p *GetOrderStatusResult) GetResult() interface{} {
 	return p.Success
 }
 
+func scheduledOrderCancelHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(order.ScheduledOrderCancelReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(order.OrderService).ScheduledOrderCancel(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ScheduledOrderCancelArgs:
+		success, err := handler.(order.OrderService).ScheduledOrderCancel(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ScheduledOrderCancelResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newScheduledOrderCancelArgs() interface{} {
+	return &ScheduledOrderCancelArgs{}
+}
+
+func newScheduledOrderCancelResult() interface{} {
+	return &ScheduledOrderCancelResult{}
+}
+
+type ScheduledOrderCancelArgs struct {
+	Req *order.ScheduledOrderCancelReq
+}
+
+func (p *ScheduledOrderCancelArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(order.ScheduledOrderCancelReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *ScheduledOrderCancelArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *ScheduledOrderCancelArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *ScheduledOrderCancelArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ScheduledOrderCancelArgs) Unmarshal(in []byte) error {
+	msg := new(order.ScheduledOrderCancelReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ScheduledOrderCancelArgs_Req_DEFAULT *order.ScheduledOrderCancelReq
+
+func (p *ScheduledOrderCancelArgs) GetReq() *order.ScheduledOrderCancelReq {
+	if !p.IsSetReq() {
+		return ScheduledOrderCancelArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ScheduledOrderCancelArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ScheduledOrderCancelArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ScheduledOrderCancelResult struct {
+	Success *order.ScheduledOrderCancelResp
+}
+
+var ScheduledOrderCancelResult_Success_DEFAULT *order.ScheduledOrderCancelResp
+
+func (p *ScheduledOrderCancelResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(order.ScheduledOrderCancelResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *ScheduledOrderCancelResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *ScheduledOrderCancelResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *ScheduledOrderCancelResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ScheduledOrderCancelResult) Unmarshal(in []byte) error {
+	msg := new(order.ScheduledOrderCancelResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ScheduledOrderCancelResult) GetSuccess() *order.ScheduledOrderCancelResp {
+	if !p.IsSetSuccess() {
+		return ScheduledOrderCancelResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ScheduledOrderCancelResult) SetSuccess(x interface{}) {
+	p.Success = x.(*order.ScheduledOrderCancelResp)
+}
+
+func (p *ScheduledOrderCancelResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ScheduledOrderCancelResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1276,6 +1436,16 @@ func (p *kClient) GetOrderStatus(ctx context.Context, Req *order.GetOrderStatusR
 	_args.Req = Req
 	var _result GetOrderStatusResult
 	if err = p.c.Call(ctx, "GetOrderStatus", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ScheduledOrderCancel(ctx context.Context, Req *order.ScheduledOrderCancelReq) (r *order.ScheduledOrderCancelResp, err error) {
+	var _args ScheduledOrderCancelArgs
+	_args.Req = Req
+	var _result ScheduledOrderCancelResult
+	if err = p.c.Call(ctx, "ScheduledOrderCancel", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

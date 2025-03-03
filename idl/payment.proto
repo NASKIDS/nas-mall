@@ -28,8 +28,8 @@ message ChargeResp {
   string transaction_id = 1;
 }
 message CancelChargeReq {
-  string order_id = 1;
-  uint64 user_id = 2;
+  uint64 user_id = 1;
+  string order_id = 2;
 }
 message CancelChargeResp {
   bool success = 1;

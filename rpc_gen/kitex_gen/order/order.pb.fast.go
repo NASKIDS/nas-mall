@@ -687,6 +687,64 @@ func (x *GetOrderStatusResp) fastReadField3(buf []byte, _type int8) (offset int,
 	return offset, err
 }
 
+func (x *ScheduledOrderCancelReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_ScheduledOrderCancelReq[number], err)
+}
+
+func (x *ScheduledOrderCancelReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.UserId, offset, err = fastpb.ReadUint64(buf, _type)
+	return offset, err
+}
+
+func (x *ScheduledOrderCancelReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.OrderId, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *ScheduledOrderCancelReq) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+	x.ScheduledTime, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *ScheduledOrderCancelResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+}
+
 func (x *Address) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
@@ -1149,6 +1207,47 @@ func (x *GetOrderStatusResp) fastWriteField3(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 3, x.GetStatus())
+	return offset
+}
+
+func (x *ScheduledOrderCancelReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
+	return offset
+}
+
+func (x *ScheduledOrderCancelReq) fastWriteField1(buf []byte) (offset int) {
+	if x.UserId == 0 {
+		return offset
+	}
+	offset += fastpb.WriteUint64(buf[offset:], 1, x.GetUserId())
+	return offset
+}
+
+func (x *ScheduledOrderCancelReq) fastWriteField2(buf []byte) (offset int) {
+	if x.OrderId == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetOrderId())
+	return offset
+}
+
+func (x *ScheduledOrderCancelReq) fastWriteField3(buf []byte) (offset int) {
+	if x.ScheduledTime == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt64(buf[offset:], 3, x.GetScheduledTime())
+	return offset
+}
+
+func (x *ScheduledOrderCancelResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
 	return offset
 }
 
@@ -1617,6 +1716,47 @@ func (x *GetOrderStatusResp) sizeField3() (n int) {
 	return n
 }
 
+func (x *ScheduledOrderCancelReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	n += x.sizeField3()
+	return n
+}
+
+func (x *ScheduledOrderCancelReq) sizeField1() (n int) {
+	if x.UserId == 0 {
+		return n
+	}
+	n += fastpb.SizeUint64(1, x.GetUserId())
+	return n
+}
+
+func (x *ScheduledOrderCancelReq) sizeField2() (n int) {
+	if x.OrderId == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetOrderId())
+	return n
+}
+
+func (x *ScheduledOrderCancelReq) sizeField3() (n int) {
+	if x.ScheduledTime == 0 {
+		return n
+	}
+	n += fastpb.SizeInt64(3, x.GetScheduledTime())
+	return n
+}
+
+func (x *ScheduledOrderCancelResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	return n
+}
+
 var fieldIDToName_Address = map[int32]string{
 	1: "StreetAddress",
 	2: "City",
@@ -1704,5 +1844,13 @@ var fieldIDToName_GetOrderStatusResp = map[int32]string{
 	2: "OrderId",
 	3: "Status",
 }
+
+var fieldIDToName_ScheduledOrderCancelReq = map[int32]string{
+	1: "UserId",
+	2: "OrderId",
+	3: "ScheduledTime",
+}
+
+var fieldIDToName_ScheduledOrderCancelResp = map[int32]string{}
 
 var _ = cart.File_cart_proto
