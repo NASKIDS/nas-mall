@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/naskids/nas-mall/app/auth/biz/dal/mysql"
 	"github.com/naskids/nas-mall/app/auth/biz/dal/redis"
@@ -29,25 +30,53 @@ func (s *DeliverTokenService) Run(req *auth.DeliverTokenReq) (resp *auth.Deliver
 		return nil, errors.New("user not found")
 	}
 
-	// 2. 生成令牌
 	var accessToken string
 	var refreshToken string
-	accessToken, err = token.Maker.GenerateAccessToken(utils.H{"uid": user.UserID, "rol": user.Role})
-	if err != nil {
-		return nil, fmt.Errorf("access token gen err: [%w]", err)
-	}
-	refreshToken, err = token.Maker.GenerateRefreshToken(utils.H{"uid": user.UserID, "rol": user.Role, "ver": user.RefreshVersion})
-	if err != nil {
-		return nil, fmt.Errorf("refresh token gen err: [%w]", err)
+	// 2. 检查是否存在有效 refresh_token
+	refreshKey := fmt.Sprintf("auth:refresh:%d", user.UserID)
+	existingRefresh, err := redis.RedisClient.Get(s.ctx, refreshKey).Result()
+	if err == nil {
+		// 验证旧 refresh_token 是否有效
+		if claims, err := token.Maker.ParseRefreshToken(existingRefresh); err == nil {
+			// 检查版本号是否匹配且未过期
+			if version, ok := claims["ver"].(float64); ok && uint64(version) == user.RefreshVersion {
+				// 复用旧 refresh_token
+				refreshToken = existingRefresh
+			}
+		}
 	}
 
-	// 持久化 access token 到 Redis 白名单
+	accessToken, err = token.Maker.GenerateAccessToken(utils.H{"uid": user.UserID, "rol": user.Role})
+	// 3. 需要生成新令牌的情况
+	if refreshToken == "" {
+		if err != nil {
+			return nil, fmt.Errorf("access token gen err: [%w]", err)
+		}
+
+		refreshToken, err = token.Maker.GenerateRefreshToken(utils.H{
+			"uid": user.UserID,
+			"rol": user.Role,
+			"ver": user.RefreshVersion,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("refresh token gen err: [%w]", err)
+		}
+
+		// 存储新 refresh_token 并设置过期时间（与令牌有效期一致）
+		if err := redis.RedisClient.Set(s.ctx, refreshKey, refreshToken, token.Maker.RefreshKeyDuration).Err(); err != nil {
+			klog.Errorf("存储 refresh_token 失败: %v", err)
+		}
+		err = model.UpdateRefreshVersion(s.ctx, mysql.DB, redis.RedisClient, user.UserID, user.RefreshVersion+1)
+		if err != nil {
+			return nil, fmt.Errorf("failed to update token: [%w]", err)
+		}
+	}
+
+	// 4. 持久化 access_token
 	accessKey := fmt.Sprintf("auth:access:%s", accessToken)
 	if err := redis.RedisClient.Set(s.ctx, accessKey, user.UserID, token.Maker.AccessKeyDuration).Err(); err != nil {
 		return nil, fmt.Errorf("存储 access_token 失败: %w", err)
 	}
-
-	// 维护用户 token 集合（用于批量管理）
 	userTokensKey := fmt.Sprintf("auth:user_tokens:%d", user.UserID)
 	redis.RedisClient.SAdd(s.ctx, userTokensKey, accessKey)
 	return &auth.DeliveryTokenResp{

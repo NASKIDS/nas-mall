@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/naskids/nas-mall/app/auth/biz/dal/mysql"
 	"github.com/naskids/nas-mall/app/auth/biz/dal/redis"
@@ -40,10 +41,12 @@ func (s *RefreshTokenService) Run(req *auth.RefreshTokenReq) (resp *auth.Refresh
 	}
 	var currentVersion uint64
 	currentVersion, err = model.GetRefreshVersion(s.ctx, mysql.DB, redis.RedisClient, userID)
-	if err != nil || currentVersion != tokenVersion {
-		return nil, fmt.Errorf("stale refresh token: [%w]", err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get token version in db: [%w]", err)
 	}
-
+	if currentVersion > tokenVersion {
+		return nil, fmt.Errorf("stale refresh token version: [%d]", tokenVersion)
+	}
 	// 3. 生成新令牌并更新版本
 	newAccess, err := token.Maker.GenerateAccessToken(utils.H{"uid": userID, "rol": role})
 	if err != nil {
@@ -52,6 +55,12 @@ func (s *RefreshTokenService) Run(req *auth.RefreshTokenReq) (resp *auth.Refresh
 	newRefresh, err := token.Maker.GenerateRefreshToken(utils.H{"uid": userID, "rol": role, "ver": currentVersion + 1})
 	if err != nil {
 		return nil, fmt.Errorf("refresh token gen err: [%w]", err)
+	}
+	// 存储新 refresh_token 并设置过期时间（与令牌有效期一致）
+	if err := redis.RedisClient.Set(
+		s.ctx, fmt.Sprintf("auth:refresh:%d", user.UserID), newRefresh, token.Maker.RefreshKeyDuration,
+	).Err(); err != nil {
+		klog.Errorf("存储 refresh_token 失败: %v", err)
 	}
 	err = model.UpdateRefreshVersion(s.ctx, mysql.DB, redis.RedisClient, userID, currentVersion+1)
 	if err != nil {
