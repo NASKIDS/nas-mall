@@ -7,24 +7,24 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/common/utils"
 
+	"github.com/naskids/nas-mall/app/auth/biz/dal/mysql"
+	"github.com/naskids/nas-mall/app/auth/biz/dal/redis"
 	"github.com/naskids/nas-mall/app/auth/biz/model"
 	"github.com/naskids/nas-mall/common/token"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
 )
 
 type DeliverTokenService struct {
-	ctx        context.Context
-	tokenMaker *token.Maker
-	userStore  model.AuthUserStore
+	ctx context.Context
 } // NewDeliverTokenService new DeliverTokenService
 func NewDeliverTokenService(ctx context.Context) *DeliverTokenService {
-	return &DeliverTokenService{ctx: ctx, tokenMaker: token.DefaultMaker(), userStore: model.DefaultAuthUserStore()}
+	return &DeliverTokenService{ctx: ctx}
 }
 
 // Run create note info
 func (s *DeliverTokenService) Run(req *auth.DeliverTokenReq) (resp *auth.DeliveryTokenResp, err error) {
 	// 1. 验证用户身份
-	user, err := s.userStore.GetUser(req.UserId)
+	user, err := model.GetUser(s.ctx, mysql.DB, redis.RedisClient, req.UserId)
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
@@ -32,11 +32,11 @@ func (s *DeliverTokenService) Run(req *auth.DeliverTokenReq) (resp *auth.Deliver
 	// 2. 生成令牌
 	var accessToken string
 	var refreshToken string
-	accessToken, err = s.tokenMaker.GenerateAccessToken(utils.H{"uid": user.ID, "rol": user.Role})
+	accessToken, err = token.Maker.GenerateAccessToken(utils.H{"uid": user.ID, "rol": user.Role})
 	if err != nil {
 		return nil, fmt.Errorf("access token gen err: [%w]", err)
 	}
-	refreshToken, err = s.tokenMaker.GenerateRefreshToken(utils.H{"uid": user.ID, "rol": user.Role, "ver": user.RefreshVersion})
+	refreshToken, err = token.Maker.GenerateRefreshToken(utils.H{"uid": user.ID, "rol": user.Role, "ver": user.RefreshVersion})
 	if err != nil {
 		return nil, fmt.Errorf("refresh token gen err: [%w]", err)
 	}

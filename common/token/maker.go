@@ -9,8 +9,6 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/hertz-contrib/paseto"
 	"github.com/samber/lo"
-
-	"github.com/naskids/nas-mall/app/auth/biz/model"
 )
 
 const (
@@ -21,22 +19,21 @@ const (
 	issuer              = "nasmall-issuer"
 )
 
-type Maker struct {
+type TokenMaker struct {
 	accessKeyDuration     time.Duration
 	refreshKeyDuration    time.Duration
 	genAccessTokenFunc    paseto.GenTokenFunc
 	genRefreshTokenFunc   paseto.GenTokenFunc
 	parseAccessTokenFunc  paseto.ParseFunc
 	parseRefreshTokenFunc paseto.ParseFunc
-	userStore             model.AuthUserStore
 }
 
 var (
-	once         sync.Once
-	defaultMaker *Maker
+	once  sync.Once
+	Maker *TokenMaker
 )
 
-func DefaultMaker() *Maker {
+func InitTokenMaker() *TokenMaker {
 	once.Do(func() {
 		publicKey := os.Getenv("PUBLIC_KEY")
 		privateKey := os.Getenv("PRIVATE_KEY")
@@ -45,20 +42,19 @@ func DefaultMaker() *Maker {
 		genRefreshTokenFunc := lo.Must(paseto.NewV4EncryptFunc(symmetricKey, []byte(defaultImplicit)))
 		parseAccessTokenFunc := lo.Must(paseto.NewV4PublicParseFunc(publicKey, []byte(defaultImplicit), paseto.WithIssuer(issuer)))
 		parseRefreshTokenFunc := lo.Must(paseto.NewV4LocalParseFunc(symmetricKey, []byte(defaultImplicit), paseto.WithIssuer(issuer)))
-		defaultMaker = &Maker{
+		Maker = &TokenMaker{
 			15 * time.Minute,
 			24 * time.Hour,
 			genAccessTokenFunc,
 			genRefreshTokenFunc,
 			parseAccessTokenFunc,
 			parseRefreshTokenFunc,
-			nil,
 		}
 	})
-	return defaultMaker
+	return Maker
 }
 
-func (m *Maker) GenerateAccessToken(customClaims utils.H) (string, error) {
+func (m *TokenMaker) GenerateAccessToken(customClaims utils.H) (string, error) {
 	now := time.Now()
 	token, err := m.genAccessTokenFunc(&paseto.StandardClaims{
 		Issuer:    issuer,
@@ -72,9 +68,9 @@ func (m *Maker) GenerateAccessToken(customClaims utils.H) (string, error) {
 	return token, nil
 }
 
-func (m *Maker) GenerateRefreshToken(customClaims utils.H) (string, error) {
+func (m *TokenMaker) GenerateRefreshToken(customClaims utils.H) (string, error) {
 	now := time.Now()
-	token, err := m.genAccessTokenFunc(&paseto.StandardClaims{
+	token, err := m.genRefreshTokenFunc(&paseto.StandardClaims{
 		Issuer:    issuer,
 		ExpiredAt: now.Add(m.refreshKeyDuration),
 		NotBefore: now,
@@ -86,7 +82,7 @@ func (m *Maker) GenerateRefreshToken(customClaims utils.H) (string, error) {
 	return token, nil
 }
 
-func (m *Maker) ParseAccessToken(tokenStr string) (claims utils.H, err error) {
+func (m *TokenMaker) ParseAccessToken(tokenStr string) (claims utils.H, err error) {
 	token, err := m.parseAccessTokenFunc(tokenStr)
 	if err != nil {
 		return nil, err
@@ -94,7 +90,7 @@ func (m *Maker) ParseAccessToken(tokenStr string) (claims utils.H, err error) {
 	return token.Claims(), nil
 }
 
-func (m *Maker) ParseRefreshToken(tokenStr string) (claims utils.H, err error) {
+func (m *TokenMaker) ParseRefreshToken(tokenStr string) (claims utils.H, err error) {
 	token, err := m.parseRefreshTokenFunc(tokenStr)
 	if err != nil {
 		return

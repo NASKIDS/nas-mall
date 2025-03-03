@@ -5,16 +5,14 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/klog"
 
-	"github.com/naskids/nas-mall/app/auth/biz/model"
 	auth "github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
 )
 
 type BanUserService struct {
-	ctx       context.Context
-	userStore model.AuthUserStore
+	ctx context.Context
 } // NewBanUserService new BanUserService
 func NewBanUserService(ctx context.Context) *BanUserService {
-	return &BanUserService{ctx: ctx, userStore: model.DefaultAuthUserStore()}
+	return &BanUserService{ctx: ctx}
 }
 
 // Run create note info

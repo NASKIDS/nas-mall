@@ -1,49 +1,38 @@
 package model
 
-import "sync"
+import (
+	"context"
 
-type AuthUserStore interface {
-	GetUser(id uint64) (user User, err error)
-	UpdateRefreshVersion(id uint64, i any) error
-	GetRefreshVersion(id uint64) (uint64, error)
-}
+	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 
-type User struct {
-	ID             uint64
+	"github.com/naskids/nas-mall/common"
+)
+
+type AuthUser struct {
+	common.Model
+	UserID         uint64
 	Role           string
 	RefreshVersion uint64
 }
 
-var (
-	once             sync.Once
-	defaultUserStore AuthUserStore
-)
-
 // TODO impl
 // 要存的东西，access token， 角色，refresh key ，refresh key 的版本, refresh key 黑名单（缓存）， access Key 白名单
 
-func DefaultAuthUserStore() AuthUserStore {
-	once.Do(func() {
-		defaultUserStore = new(AuthUserStoreImpl)
-	})
-	return defaultUserStore
+func GetUser(ctx context.Context, db *gorm.DB, cache *redis.Client, userId uint64) (user AuthUser, err error) {
+	return AuthUser{
+		UserID:         3,
+		Role:           "visitor",
+		RefreshVersion: 0,
+	}, nil
 }
 
-var _ AuthUserStore = &AuthUserStoreImpl{}
-
-type AuthUserStoreImpl struct{}
-
-func (a *AuthUserStoreImpl) GetUser(id uint64) (user User, err error) {
+func UpdateRefreshVersion(ctx context.Context, db *gorm.DB, cache *redis.Client, userId uint64, version uint64) error {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (a *AuthUserStoreImpl) UpdateRefreshVersion(id uint64, i any) error {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (a *AuthUserStoreImpl) GetRefreshVersion(id uint64) (uint64, error) {
+func GetRefreshVersion(ctx context.Context, db *gorm.DB, cache *redis.Client, userId uint64) (uint64, error) {
 	// TODO implement me
 	panic("implement me")
 }
