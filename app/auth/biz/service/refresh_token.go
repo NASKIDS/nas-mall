@@ -29,13 +29,13 @@ func (s *RefreshTokenService) Run(req *auth.RefreshTokenReq) (resp *auth.Refresh
 		return nil, fmt.Errorf("invalid refresh token: [%w]", err)
 	}
 
-	userID, tokenVersion, role := tk["uid"].(uint64), tk["ver"].(uint64), tk["rol"].(string)
+	userID, tokenVersion, role := uint64(tk["uid"].(float64)), uint64(tk["ver"].(float64)), tk["rol"].(string)
 	// 2. 验证用户
 	user, err := model.GetUser(s.ctx, mysql.DB, redis.RedisClient, userID)
 	if err != nil {
 		return nil, err
 	}
-	if user.ID != userID || user.Role != role {
+	if user.UserID != userID || user.Role != role {
 		return nil, fmt.Errorf("incorrect user info: [%w]", err)
 	}
 	var currentVersion uint64
@@ -58,7 +58,15 @@ func (s *RefreshTokenService) Run(req *auth.RefreshTokenReq) (resp *auth.Refresh
 		return nil, fmt.Errorf("failed to update token: [%w]", err)
 	}
 
-	// TODO  4. 持久化token 到 redis
+	// 持久化新 access token
+	newAccessKey := fmt.Sprintf("auth:access:%s", newAccess)
+	if err := redis.RedisClient.Set(s.ctx, newAccessKey, userID, token.Maker.AccessKeyDuration).Err(); err != nil {
+		return nil, fmt.Errorf("failed to store new  access_token : %w", err)
+	}
+
+	// 更新用户 token 集合
+	userTokensKey := fmt.Sprintf("auth:user_tokens:%d", userID)
+	redis.RedisClient.SAdd(s.ctx, userTokensKey, newAccessKey)
 	return &auth.RefreshTokenResp{
 		AccessToken:  newAccess,
 		RefreshToken: newRefresh,

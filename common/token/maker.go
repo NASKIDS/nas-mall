@@ -20,8 +20,8 @@ const (
 )
 
 type TokenMaker struct {
-	accessKeyDuration     time.Duration
-	refreshKeyDuration    time.Duration
+	AccessKeyDuration     time.Duration
+	RefreshKeyDuration    time.Duration
 	genAccessTokenFunc    paseto.GenTokenFunc
 	genRefreshTokenFunc   paseto.GenTokenFunc
 	parseAccessTokenFunc  paseto.ParseFunc
@@ -58,7 +58,7 @@ func (m *TokenMaker) GenerateAccessToken(customClaims utils.H) (string, error) {
 	now := time.Now()
 	token, err := m.genAccessTokenFunc(&paseto.StandardClaims{
 		Issuer:    issuer,
-		ExpiredAt: now.Add(m.accessKeyDuration),
+		ExpiredAt: now.Add(m.AccessKeyDuration),
 		NotBefore: now,
 		IssuedAt:  now,
 	}, customClaims, nil)
@@ -72,7 +72,7 @@ func (m *TokenMaker) GenerateRefreshToken(customClaims utils.H) (string, error) 
 	now := time.Now()
 	token, err := m.genRefreshTokenFunc(&paseto.StandardClaims{
 		Issuer:    issuer,
-		ExpiredAt: now.Add(m.refreshKeyDuration),
+		ExpiredAt: now.Add(m.RefreshKeyDuration),
 		NotBefore: now,
 		IssuedAt:  now,
 	}, customClaims, nil)

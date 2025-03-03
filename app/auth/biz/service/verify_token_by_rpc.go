@@ -24,18 +24,20 @@ func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.Veri
 	if err != nil {
 		return nil, fmt.Errorf("remote failed to verify token: [%w]", err)
 	}
-	// 检查缓存白名单有该token
-	//if not in white list {
-	//	return &auth.VerifyTokenResp{IsVaild: false}, nil
-	//}
+	// 检查白名单
+	exists, err := redis.RedisClient.Exists(s.ctx, fmt.Sprintf("auth:access:%s", req.AccessToken)).Result()
+	if exists == 0 {
+		return &auth.VerifyTokenResp{IsValid: false}, nil
+	}
 
 	userId := claims["uid"].(float64)
 	role := claims["rol"].(string)
 
-	// 检查用户黑名单没有
-	//if in user blacklist {
-	//	return &auth.VerifyTokenResp{IsVaild: false}, nil
-	//}
+	// 检查用户黑名单
+	isBanned, err := redis.RedisClient.SIsMember(s.ctx, "auth:user_blacklist", userId).Result()
+	if isBanned {
+		return &auth.VerifyTokenResp{IsValid: false}, nil
+	}
 
 	// 从存储中获取 user 最新信息
 	user, err := model.GetUser(s.ctx, mysql.DB, redis.RedisClient, uint64(userId))

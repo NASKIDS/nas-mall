@@ -12,6 +12,7 @@ import (
 
 	"github.com/naskids/nas-mall/app/auth/biz/dal"
 	"github.com/naskids/nas-mall/app/auth/conf"
+	"github.com/naskids/nas-mall/app/auth/middleware"
 	"github.com/naskids/nas-mall/common/mtl"
 	"github.com/naskids/nas-mall/common/serversuite"
 	"github.com/naskids/nas-mall/common/token"
@@ -57,6 +58,7 @@ func kitexInit() (opts []server.Option) {
 	}
 	opts = append(opts,
 		server.WithServiceAddr(addr),
+		server.WithMiddleware(middleware.ACL),
 		server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
 
 	// service info

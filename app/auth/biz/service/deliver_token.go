@@ -32,16 +32,24 @@ func (s *DeliverTokenService) Run(req *auth.DeliverTokenReq) (resp *auth.Deliver
 	// 2. 生成令牌
 	var accessToken string
 	var refreshToken string
-	accessToken, err = token.Maker.GenerateAccessToken(utils.H{"uid": user.ID, "rol": user.Role})
+	accessToken, err = token.Maker.GenerateAccessToken(utils.H{"uid": user.UserID, "rol": user.Role})
 	if err != nil {
 		return nil, fmt.Errorf("access token gen err: [%w]", err)
 	}
-	refreshToken, err = token.Maker.GenerateRefreshToken(utils.H{"uid": user.ID, "rol": user.Role, "ver": user.RefreshVersion})
+	refreshToken, err = token.Maker.GenerateRefreshToken(utils.H{"uid": user.UserID, "rol": user.Role, "ver": user.RefreshVersion})
 	if err != nil {
 		return nil, fmt.Errorf("refresh token gen err: [%w]", err)
 	}
 
-	// TODO 3. 持久化 token 到 redis
+	// 持久化 access token 到 Redis 白名单
+	accessKey := fmt.Sprintf("auth:access:%s", accessToken)
+	if err := redis.RedisClient.Set(s.ctx, accessKey, user.UserID, token.Maker.AccessKeyDuration).Err(); err != nil {
+		return nil, fmt.Errorf("存储 access_token 失败: %w", err)
+	}
+
+	// 维护用户 token 集合（用于批量管理）
+	userTokensKey := fmt.Sprintf("auth:user_tokens:%d", user.UserID)
+	redis.RedisClient.SAdd(s.ctx, userTokensKey, accessKey)
 	return &auth.DeliveryTokenResp{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
