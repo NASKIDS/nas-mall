@@ -37,7 +37,8 @@ func Init() {
 				klog.Warnf("auto migrate tables failed, err:%v", err)
 			}
 
-			DB.Exec("INSERT INTO `auth_user` (`user_id`,`role`,`refresh_version`) VALUES (1, 'admin', 1), (2, 'user', 1032)")
+			DB.Create(&model.AuthUser{UserID: 1, Role: "admin", RefreshVersion: 2})
+			DB.Create(&model.AuthUser{UserID: 2, Role: "user", RefreshVersion: 1239})
 		}
 	}
 	if err = DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
