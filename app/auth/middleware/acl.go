@@ -18,9 +18,11 @@ import (
 	"github.com/naskids/nas-mall/common/token"
 )
 
-var errRejected = errors.New("casbin rejected")
-var errNoMethod = errors.New("no method")
-var E *casbin.Enforcer
+var (
+	errRejected = errors.New("casbin rejected")
+	errNoMethod = errors.New("no method")
+	enforcer    *casbin.Enforcer
+)
 
 func reject(ctx context.Context, request interface{}) (reason error) {
 	accessToken, _ := metainfo.GetValue(ctx, "access_token")
@@ -43,7 +45,7 @@ func reject(ctx context.Context, request interface{}) (reason error) {
 	}
 
 	obj := fmt.Sprintf("%s/%s", svcName, method)
-	if enforce, err := E.Enforce(role, obj, "CALL"); err != nil || !enforce {
+	if enforce, err := enforcer.Enforce(role, obj, "CALL"); err != nil || !enforce {
 		return errRejected
 	}
 
@@ -68,20 +70,20 @@ func InitACL() {
 	m.AddDef("e", "e", "some(where (p.eft == allow))")
 	m.AddDef("m", "m", "g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)")
 
-	E, _ = casbin.NewEnforcer(m)
+	enforcer, _ = casbin.NewEnforcer(m)
 
-	err := E.SetWatcher(w)
+	err := enforcer.SetWatcher(w)
 	if err != nil {
 		klog.Fatalf("init casbin enforcer failed: %s", err)
 	}
 	err = w.SetUpdateCallback(func(s string) {
 		klog.Info(s)
-		rediswatcher.DefaultUpdateCallback(E)(s)
+		rediswatcher.DefaultUpdateCallback(enforcer)(s)
 	})
 	if err != nil {
 		klog.Fatalf("init enforcer failed : %s", err)
 	}
-	ok, err := E.AddPolicy("anonymous", "AuthService/*", "CALL")
+	ok, err := enforcer.AddPolicy("anonymous", "AuthService/*", "CALL")
 	if !ok || err != nil {
 		klog.Fatalf("init policy failed : %s", err)
 	}
