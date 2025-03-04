@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+
 	"github.com/cloudwego/kitex/pkg/klog"
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/naskids/nas-mall/app/user/biz/model"
 	user "github.com/naskids/nas-mall/rpc_gen/kitex_gen/user"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/naskids/nas-mall/app/user/biz/dal/mysql"
 )
