@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package ai;
+
+import "order.proto";
+
+option go_package = "/ai";
+
+service AiModelService {
+  // 大模型订单查询
+  rpc QueryOrder(QueryOrderRequest) returns (order.ListOrderResp);
+  // 模拟自动下单
+  rpc SimulateAutoOrder(SimulateAutoOrderRequest) returns (stream SimulateAutoOrderResponse);
+}
+
+// 订单查询请求
+message QueryOrderRequest {
+  string user_message = 1;
+}
+
+// 模拟自动下单请求
+message SimulateAutoOrderRequest {
+  string user_message = 1;
+}
+
+// 模拟自动下单响应
+message SimulateAutoOrderResponse {
+  string assistant_message = 1;
+}
