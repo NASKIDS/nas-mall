@@ -28,12 +28,11 @@ import (
 
 type Product struct {
 	common.Model
-	Name        string         `json:"name"`
-	Description string         `json:"description"`
-	Picture     string         `json:"picture"`
-	Price       float32        `json:"price"`
-	Categories  []Category     `json:"categories" gorm:"many2many:product_category"`
-	DeletedAt   gorm.DeletedAt `gorm:"index"` // 必须包含这个字段
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	Picture     string     `json:"picture"`
+	Price       float32    `json:"price"`
+	Categories  []Category `json:"categories" gorm:"many2many:product_category"`
 }
 
 func (p Product) TableName() string {
