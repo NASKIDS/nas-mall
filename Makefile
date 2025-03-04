@@ -114,7 +114,7 @@ build-frontend: ## build the frontend service image
 
 .PHONY: build-svc
 build-svc:  ## build one service image
-	docker build -f ./deploy/Dockerfile.svc -t ${svc}:${v} --build-arg SVC=${svc} .
+	docker build -f ./deploy/Dockerfile.svc -t ${svc}:${v} -t ${svc}:latest --build-arg SVC=${svc} .
 
 .PHONY: build-all
 build-all: tidy vet lint-fix test ## build all service image
