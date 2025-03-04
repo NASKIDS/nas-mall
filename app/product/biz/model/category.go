@@ -37,3 +37,13 @@ func GetProductsByCategoryName(db *gorm.DB, ctx context.Context, name string) (c
 	err = db.WithContext(ctx).Model(&Category{}).Where(&Category{Name: name}).Preload("Products").Find(&category).Error
 	return category, err
 }
+
+// 判断分类是否存在
+func ExistsByCategoryName(db *gorm.DB, ctx context.Context, name string) (bool, error) {
+	var count int64
+	err := db.WithContext(ctx).
+		Model(&Category{}).
+		Where("name = ?", name).
+		Count(&count).Error
+	return count > 0, err
+}
