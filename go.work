@@ -1,8 +1,10 @@
-go 1.21
+go 1.23.3
 
 use (
+	./app/auth
 	./app/cart
 	./app/checkout
+	./app/email
 	./app/frontend
 	./app/order
 	./app/payment

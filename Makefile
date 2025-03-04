@@ -1,4 +1,5 @@
-v ?= lastest
+v ?= $(shell git describe --tags --always --dirty)
+ctx ?= docker-desktop
 
 .PHONY: all
 all: help
@@ -112,23 +113,23 @@ build-frontend: ## build the frontend service image
 	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
 
 .PHONY: build-svc
-build-svc: tidy vet lint-fix test ## build a custom service image
+build-svc:  ## build one service image
 	docker build -f ./deploy/Dockerfile.svc -t ${svc}:${v} --build-arg SVC=${svc} .
 
 .PHONY: build-all
 build-all: tidy vet lint-fix test ## build all service image
-	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
-	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
-	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
-	#docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
-	docker build -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
-	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
-	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
-	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} -t frontend:latest .
+	docker build -f ./deploy/Dockerfile.svc -t cart:${v} -t cart:latest --build-arg SVC=cart .
+	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} -t checkout:latest --build-arg SVC=checkout .
+	docker build -f ./deploy/Dockerfile.svc -t email:${v} -t email:latest --build-arg SVC=email .
+	docker build -f ./deploy/Dockerfile.svc -t order:${v} -t order:latest --build-arg SVC=order .
+	docker build -f ./deploy/Dockerfile.svc -t payment:${v} -t payment:latest --build-arg SVC=payment .
+	docker build -f ./deploy/Dockerfile.svc -t product:${v} -t product:latest --build-arg SVC=product .
+	docker build -f ./deploy/Dockerfile.svc -t user:${v} -t user:latest --build-arg SVC=user .
 
 ##@ Deploy Images
 
 .PHONY: deploy
 deploy: ## deploy manifests to kubernetes
-	kubectl apply --context=${context} -f deploy/gomall-dev-base.yaml --validate=false
-	kubectl apply --context=${context} -f deploy/gomall-dev-app.yaml --validate=false
+	kubectl apply --context=${ctx} -f deploy/gomall-dev-base.yaml
+	kubectl apply --context=${ctx} -f deploy/gomall-dev-app.yaml
