@@ -4,15 +4,19 @@ go 1.21
 
 replace (
 	github.com/apache/thrift => github.com/apache/thrift v0.13.0
+	github.com/naskids/nas-mall/app/order => ../order
 	github.com/naskids/nas-mall/common => ../../common
 	github.com/naskids/nas-mall/rpc_gen => ../../rpc_gen
 )
 
 require (
 	github.com/cloudwego/eino v0.3.10
+	github.com/cloudwego/eino-ext/components/model/ark v0.0.0-20250305065412-61b1de59600c
+	github.com/cloudwego/eino-ext/components/retriever/volc_vikingdb v0.0.0-20250305065412-61b1de59600c
 	github.com/cloudwego/kitex v0.12.3
 	github.com/joho/godotenv v1.5.1
 	github.com/kr/pretty v0.3.1
+	github.com/naskids/nas-mall/app/order v0.0.0-00010101000000-000000000000
 	github.com/naskids/nas-mall/common v0.0.0-00010101000000-000000000000
 	github.com/naskids/nas-mall/rpc_gen v0.0.0-00010101000000-000000000000
 	github.com/redis/go-redis/v9 v9.7.1
@@ -39,7 +43,7 @@ require (
 	github.com/nikolalohinski/gonja v1.5.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/perimeterx/marshmallow v1.1.4 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/slongfield/pyfmt v0.0.0-20220222012616-ea85ff4c361f // indirect
 	github.com/volcengine/volc-sdk-golang v1.0.182 // indirect
@@ -58,8 +62,6 @@ require (
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/configmanager v0.2.2 // indirect
 	github.com/cloudwego/dynamicgo v0.5.2 // indirect
-	github.com/cloudwego/eino-ext/components/model/ark v0.0.0-20250305065412-61b1de59600c
-	github.com/cloudwego/eino-ext/components/retriever/volc_vikingdb v0.0.0-20250305065412-61b1de59600c
 	github.com/cloudwego/fastpb v0.0.5 // indirect
 	github.com/cloudwego/frugal v0.2.3 // indirect
 	github.com/cloudwego/gopkg v0.1.4 // indirect
@@ -75,7 +77,7 @@ require (
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 // indirect

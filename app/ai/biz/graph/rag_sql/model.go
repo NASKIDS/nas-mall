@@ -1,4 +1,4 @@
-package graph
+package rag_sql
 
 import (
 	"context"
