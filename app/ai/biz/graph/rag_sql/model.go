@@ -9,7 +9,6 @@ import (
 
 // newChatModel component initialization function of node 'ChatModel2' in graph 'text2sql'
 func newChatModel(ctx context.Context) (cm model.ChatModel, err error) {
-	// TODO Modify component configuration here.
 	config := &ark.ChatModelConfig{}
 	cm, err = ark.NewChatModel(ctx, config)
 	if err != nil {

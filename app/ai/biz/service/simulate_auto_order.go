@@ -19,9 +19,6 @@ func NewSimulateAutoOrderService(ctx context.Context) *SimulateAutoOrderService 
 
 func (s *SimulateAutoOrderService) Run(req *ai.SimulateAutoOrderRequest, stream ai.AiModelService_SimulateAutoOrderServer) (err error) {
 	klog.Info(req.UserMessage)
-	defer func() {
-		_ = stream.Close()
-	}()
 	for i := 0; i < 3; i++ {
 		err := stream.Send(&ai.SimulateAutoOrderResponse{AssistantMessage: "hi!"})
 		if err != nil {

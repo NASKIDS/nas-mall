@@ -6,7 +6,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/naskids/nas-mall/app/ai/biz/dal/mysql"
-	"github.com/naskids/nas-mall/app/ai/biz/graph/rag_sql"
+	//"github.com/naskids/nas-mall/app/ai/biz/graph/rag_sql"
 	"github.com/naskids/nas-mall/app/ai/biz/model"
 	ai "github.com/naskids/nas-mall/rpc_gen/kitex_gen/ai"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart"
@@ -22,12 +22,13 @@ func NewQueryOrderService(ctx context.Context) *QueryOrderService {
 
 // Run create note info
 func (s *QueryOrderService) Run(req *ai.QueryOrderRequest) (resp *order.ListOrderResp, err error) {
-	sql, err := rag_sql.Text2SQL.Invoke(s.ctx, &req.UserMessage)
-	if err != nil {
-		klog.Error(err)
-	}
+	//sql, err := rag_sql.Text2SQL.Invoke(s.ctx, &req.UserMessage)
+	sql := ""
+	//if err != nil {
+	//	klog.Error(err)
+	//}
 
-	orders, err := model.GetOrderFromRawSQL(s.ctx, mysql.DB, sql)
+	orders, err := model.GetOrderFromRawSQL(s.ctx, mysql.DB, &sql)
 	if err != nil {
 		klog.Errorf("model.ListOrder.err:%v", err)
 		return nil, err
