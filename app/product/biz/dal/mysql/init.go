@@ -15,11 +15,8 @@
 package mysql
 
 import (
-	"bytes"
 	"fmt"
 	"os"
-	"strings"
-	"text/template"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 
