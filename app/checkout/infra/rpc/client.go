@@ -20,7 +20,6 @@ import (
 	"github.com/cloudwego/kitex/client"
 
 	"github.com/naskids/nas-mall/app/checkout/conf"
-	"github.com/naskids/nas-mall/common/clientsuite"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order/orderservice"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment/paymentservice"
@@ -44,9 +43,9 @@ var (
 func InitClient() {
 	once.Do(func() {
 		serviceName = conf.GetConf().Kitex.Service
-		commonSuite = client.WithSuite(clientsuite.CommonGrpcClientSuite{
-			CurrentServiceName: serviceName,
-		})
+		// commonSuite = client.WithSuite(clientsuite.CommonGrpcClientSuite{
+		// 	CurrentServiceName: serviceName,
+		// })
 		initCartClient()
 		initProductClient()
 		initPaymentClient()
@@ -55,21 +54,21 @@ func InitClient() {
 }
 
 func initProductClient() {
-	rpcproduct.InitClient("product", commonSuite)
+	// rpcproduct.InitClient("product", commonSuite)
 	ProductClient = rpcproduct.DefaultClient()
 }
 
 func initCartClient() {
-	rpccart.InitClient("cart", commonSuite)
+	// rpccart.InitClient("cart", commonSuite)
 	CartClient = rpccart.DefaultClient()
 }
 
 func initPaymentClient() {
-	rpcpayment.InitClient("payment", commonSuite)
+	// rpcpayment.InitClient("payment", commonSuite)
 	PaymentClient = rpcpayment.DefaultClient()
 }
 
 func initOrderClient() {
-	rpcorder.InitClient("order", commonSuite)
+	// rpcorder.InitClient("order", commonSuite)
 	OrderClient = rpcorder.DefaultClient()
 }

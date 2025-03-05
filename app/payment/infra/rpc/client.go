@@ -47,7 +47,7 @@ type OrderClientSuite struct {
 
 func (s OrderClientSuite) Options() []client.Option {
 	opts := []client.Option{
-		client.WithHostPorts("192.168.18.133:8886"),
+		client.WithHostPorts("10.1.2.133:8886"),
 		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
 		client.WithTransportProtocol(transport.GRPC),
 	}

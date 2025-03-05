@@ -16,16 +16,14 @@ package service
 
 import (
 	"context"
+	"errors"
+	"math/rand"
 	"strconv"
 	"time"
 
-	"github.com/cloudwego/kitex/pkg/kerrors"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
 
-	"github.com/naskids/nas-mall/app/payment/biz/dal/mysql"
-
-	"github.com/naskids/nas-mall/app/payment/biz/model"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
 )
 
@@ -38,6 +36,7 @@ func NewChargeService(ctx context.Context) *ChargeService {
 
 // Run create note info
 func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, err error) {
+
 	card := creditcard.Card{
 		Number: req.CreditCard.CreditCardNumber,
 		Cvv:    strconv.Itoa(int(req.CreditCard.CreditCardCvv)),
@@ -46,24 +45,41 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 	}
 
 	err = card.Validate(true)
+	// fmt.Printf("err:%v", err)
+
+	// fmt.Printf("kerrors.NewBizStatusError(400, err.Error()):%v", kerrors.NewBizStatusError(400, err.Error()))
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(400, err.Error())
+		return nil, err
+	}
+	payErr := randomPay()
+	// fmt.Printf("payErr:%v", payErr)
+	if payErr != nil {
+		return nil, payErr
 	}
 
 	translationId, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
 	}
+	// fmt.Printf("translationId:%v", translationId)
 
-	err = model.CreatePaymentLog(mysql.DB, s.ctx, &model.PaymentLog{
-		UserId:        req.UserId,
-		OrderId:       req.OrderId,
-		TransactionId: translationId.String(),
-		Amount:        req.Amount,
-		PayAt:         time.Now(),
-	})
-	if err != nil {
-		return nil, err
-	}
+	// err = model.CreatePaymentLog(mysql.DB, s.ctx, &model.PaymentLog{
+	// 	UserId:        req.UserId,
+	// 	OrderId:       req.OrderId,
+	// 	TransactionId: translationId.String(),
+	// 	Amount:        req.Amount,
+	// 	PayAt:         time.Now(),
+	// })
+	// if err != nil {
+	// 	return nil, err
+	// }
 	return &payment.ChargeResp{TransactionId: translationId.String()}, nil
+}
+func randomPay() error {
+	rand.Seed(time.Now().UnixNano())
+	random := rand.Intn(100)
+	if random < 50 {
+		return errors.New("支付失败")
+	}
+	return nil
 }

@@ -23,6 +23,7 @@ import (
 	"github.com/joho/godotenv"
 	"gopkg.in/natefinch/lumberjack.v2"
 
+	"github.com/naskids/nas-mall/app/checkout/biz/dal"
 	"github.com/naskids/nas-mall/app/checkout/conf"
 	"github.com/naskids/nas-mall/app/checkout/infra/mq"
 	"github.com/naskids/nas-mall/app/checkout/infra/rpc"
@@ -45,6 +46,7 @@ func main() {
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	rpc.InitClient()
+	dal.Init()
 	mq.Init()
 	opts := kitexInit()
 

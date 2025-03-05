@@ -63,7 +63,7 @@ func handleOrderCancelMessage(msg *nats.Msg) {
 			cancelMsg.OrderID, now, cancelMsg.ExpireTime)
 		// 消息未过期，稍后再处理
 		// 使用延迟Nak来在一段时间后重新投递消息
-		msg.NakWithDelay(time.Second * 5)
+		msg.NakWithDelay(time.Second * 60)
 		return
 	}
 

@@ -16,6 +16,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/naskids/nas-mall/app/payment/biz/service"
 	payment "github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
@@ -27,13 +28,20 @@ type PaymentServiceImpl struct{}
 // Charge implements the PaymentServiceImpl interface.
 func (s *PaymentServiceImpl) Charge(ctx context.Context, req *payment.ChargeReq) (resp *payment.ChargeResp, err error) {
 	resp, err = service.NewChargeService(ctx).Run(req)
-
+	fmt.Printf("resp, err:%v, %v\n", resp, err)
 	return resp, err
 }
 
 // CancelCharge implements the PaymentServiceImpl interface.
 func (s *PaymentServiceImpl) CancelCharge(ctx context.Context, req *payment.CancelChargeReq) (resp *payment.CancelChargeResp, err error) {
 	resp, err = service.NewCancelChargeService(ctx).Run(req)
+
+	return resp, err
+}
+
+// CreatePaymentLog implements the PaymentServiceImpl interface.
+func (s *PaymentServiceImpl) CreatePaymentLog(ctx context.Context, req *payment.CreatePaymentLogReq) (resp *payment.CreatePaymentLogResp, err error) {
+	resp, err = service.NewCreatePaymentLogService(ctx).Run(req)
 
 	return resp, err
 }
