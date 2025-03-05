@@ -16,8 +16,9 @@ package service
 
 import (
 	"context"
-	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/user"
 	"testing"
+
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/user"
 )
 
 func TestLogin_Run(t *testing.T) {
