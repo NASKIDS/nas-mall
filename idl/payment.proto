@@ -7,6 +7,8 @@ option go_package = "payment";
 
 service PaymentService {
   rpc Charge(ChargeReq) returns (ChargeResp) {}
+  rpc CancelCharge(CancelChargeReq) returns (CancelChargeResp) {}
+  rpc CreatePaymentLog(CreatePaymentLogReq) returns (CreatePaymentLogResp) {}
 }
 
 message CreditCardInfo {
@@ -25,4 +27,20 @@ message ChargeReq {
 
 message ChargeResp {
   string transaction_id = 1;
+}
+message CancelChargeReq {
+  uint64 user_id = 1;
+  string order_id = 2;
+}
+message CancelChargeResp {
+  bool success = 1;
+}
+message CreatePaymentLogReq {
+  uint64 user_id = 1;
+  string order_id = 2;
+  string transaction_id = 3;
+  float amount = 4;
+}
+
+message CreatePaymentLogResp {
 }

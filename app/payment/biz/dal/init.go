@@ -16,9 +16,10 @@ package dal
 
 import (
 	"github.com/naskids/nas-mall/app/payment/biz/dal/mysql"
+	"github.com/naskids/nas-mall/app/payment/biz/dal/redis"
 )
 
 func Init() {
-	// redis.Init()
+	redis.Init()
 	mysql.Init()
 }

@@ -32,7 +32,7 @@ func Init() {
 	}
 
 	// 创建Stream（如果不存在）
-	OrderStreamConfig := &nats.StreamConfig{
+	streamConfig := &nats.StreamConfig{
 		Name:      "ORDERS",
 		Subjects:  []string{"order.*"},
 		MaxAge:    24 * time.Hour,
@@ -45,31 +45,12 @@ func Init() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	_, err = JetStream.AddStream(OrderStreamConfig, nats.Context(ctx))
+	_, err = JetStream.AddStream(streamConfig, nats.Context(ctx))
 	if err != nil {
 		if err == nats.ErrStreamNameAlreadyInUse {
-			log.Println("订单Stream已存在，继续执行")
+			log.Println("Stream已存在，继续执行")
 		} else {
-			log.Printf("创建订单Stream失败: %v", err)
-			panic(err)
-		}
-	}
-
-	PaymentStreamConfig := &nats.StreamConfig{
-		Name:      "PAYMENTS",
-		Subjects:  []string{"payment.*"},
-		MaxAge:    24 * time.Hour,
-		Storage:   nats.FileStorage,
-		Retention: nats.InterestPolicy,
-		Replicas:  1,
-	}
-
-	_, err = JetStream.AddStream(PaymentStreamConfig, nats.Context(ctx))
-	if err != nil {
-		if err == nats.ErrStreamNameAlreadyInUse {
-			log.Println("支付Stream已存在，继续执行")
-		} else {
-			log.Printf("创建支付Stream失败: %v", err)
+			log.Printf("创建Stream失败: %v", err)
 			panic(err)
 		}
 	}
@@ -79,20 +60,11 @@ func Init() {
 
 const (
 	// 主题
-	OrderCancelSubject   = "order.cancel"   // 订单取消
-	PaymentCancelSubject = "payment.cancel" // 支付取消
+	OrderCancelSubject = "order.cancel" // 订单取消
 )
 
 // 订单取消消息
 type OrderCancelMessage struct {
-	OrderID    string `json:"order_id"`
-	UserID     uint64 `json:"user_id"`
-	CreateTime int64  `json:"create_time"` // 消息创建时间戳
-	ExpireTime int64  `json:"expire_time"` // 过期时间戳
-}
-
-// 支付取消消息
-type PaymentCancelMessage struct {
 	OrderID    string `json:"order_id"`
 	UserID     uint64 `json:"user_id"`
 	CreateTime int64  `json:"create_time"` // 消息创建时间戳

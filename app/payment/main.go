@@ -25,6 +25,9 @@ import (
 
 	"github.com/naskids/nas-mall/app/payment/biz/dal"
 	"github.com/naskids/nas-mall/app/payment/conf"
+	"github.com/naskids/nas-mall/app/payment/infra/mq"
+	"github.com/naskids/nas-mall/app/payment/infra/rpc"
+
 	"github.com/naskids/nas-mall/app/payment/middleware"
 	"github.com/naskids/nas-mall/common/mtl"
 	"github.com/naskids/nas-mall/common/serversuite"
@@ -44,7 +47,12 @@ func main() {
 	})
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+	rpc.InitClient()
 	dal.Init()
+	mq.Init()
+	if err := mq.InitPaymentCancelConsumer(); err != nil {
+		klog.Fatalf("初始化支付取消消费者失败: %v", err)
+	}
 	opts := kitexInit()
 
 	svr := paymentservice.NewServer(new(PaymentServiceImpl), opts...)
