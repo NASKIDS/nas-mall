@@ -114,6 +114,15 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 			State:         addr.State,
 			ZipCode:       int32(zipCodeInt),
 		}
+	} else {
+		// 默认地址
+		orderReq.Address = &order.Address{
+			StreetAddress: "123 Main St",
+			City:          "Anytown",
+			Country:       "USA",
+			State:         "CA",
+			ZipCode:       12345,
+		}
 	}
 
 	orderResult, err := rpc.OrderClient.PlaceOrder(s.ctx, orderReq)
