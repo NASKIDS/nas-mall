@@ -56,7 +56,7 @@ func (s *DeliverTokenService) Run(req *auth.DeliverTokenReq) (resp *auth.Deliver
 		refreshToken, err = token.Maker.GenerateRefreshToken(utils.H{
 			"uid": user.UserID,
 			"rol": user.Role,
-			"ver": user.RefreshVersion,
+			"ver": user.RefreshVersion + 1,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("refresh token gen err: [%w]", err)
