@@ -9,6 +9,7 @@ replace (
 )
 
 require (
+	github.com/cloudwego/eino v0.3.10
 	github.com/cloudwego/kitex v0.12.3
 	github.com/joho/godotenv v1.5.1
 	github.com/kr/pretty v0.3.1
@@ -24,6 +25,29 @@ require (
 )
 
 require (
+	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/getkin/kin-openapi v0.118.0 // indirect
+	github.com/go-openapi/jsonpointer v0.19.5 // indirect
+	github.com/go-openapi/swag v0.19.5 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/goph/emperror v0.17.2 // indirect
+	github.com/invopop/yaml v0.1.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/nikolalohinski/gonja v1.5.3 // indirect
+	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
+	github.com/perimeterx/marshmallow v1.1.4 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/slongfield/pyfmt v0.0.0-20220222012616-ea85ff4c361f // indirect
+	github.com/volcengine/volc-sdk-golang v1.0.182 // indirect
+	github.com/volcengine/volcengine-go-sdk v1.0.181 // indirect
+	github.com/yargevad/filepathx v1.0.0 // indirect
+)
+
+require (
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bytedance/gopkg v0.1.1 // indirect
@@ -34,6 +58,8 @@ require (
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/configmanager v0.2.2 // indirect
 	github.com/cloudwego/dynamicgo v0.5.2 // indirect
+	github.com/cloudwego/eino-ext/components/model/ark v0.0.0-20250305065412-61b1de59600c
+	github.com/cloudwego/eino-ext/components/retriever/volc_vikingdb v0.0.0-20250305065412-61b1de59600c
 	github.com/cloudwego/fastpb v0.0.5 // indirect
 	github.com/cloudwego/frugal v0.2.3 // indirect
 	github.com/cloudwego/gopkg v0.1.4 // indirect
@@ -107,7 +133,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.1.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/arch v0.6.0 // indirect
+	golang.org/x/arch v0.11.0 // indirect
 	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3 // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
