@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -xe
 . scripts/list_app.sh
 
 get_app_list
