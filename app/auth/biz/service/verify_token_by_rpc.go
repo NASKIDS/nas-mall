@@ -25,7 +25,7 @@ func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.Veri
 		return nil, fmt.Errorf("remote failed to verify token: [%w]", err)
 	}
 	// 检查白名单
-	exists, err := redis.RedisClient.Exists(s.ctx, fmt.Sprintf("auth:access:%s", req.AccessToken)).Result()
+	exists, _ := redis.RedisClient.Exists(s.ctx, fmt.Sprintf("auth:access:%s", req.AccessToken)).Result()
 	if exists == 0 {
 		return &auth.VerifyTokenResp{IsValid: false}, nil
 	}
@@ -34,7 +34,7 @@ func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.Veri
 	role := claims["rol"].(string)
 
 	// 检查用户黑名单
-	isBanned, err := redis.RedisClient.SIsMember(s.ctx, "auth:user_blacklist", userId).Result()
+	isBanned, _ := redis.RedisClient.SIsMember(s.ctx, "auth:user_blacklist", userId).Result()
 	if isBanned {
 		return &auth.VerifyTokenResp{IsValid: false}, nil
 	}

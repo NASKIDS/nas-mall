@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"testing"
+
 	product "github.com/naskids/nas-mall/rpc_gen/kitex_gen/product"
 )
 
@@ -17,5 +18,4 @@ func TestCreateProduct_Run(t *testing.T) {
 	t.Logf("resp: %v", resp)
 
 	// todo: edit your unit test
-
 }

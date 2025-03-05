@@ -1,6 +1,7 @@
 go 1.23.3
 
 use (
+	./app/ai
 	./app/auth
 	./app/cart
 	./app/checkout

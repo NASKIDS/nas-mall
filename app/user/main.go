@@ -15,12 +15,13 @@
 package main
 
 import (
+	"net"
+	"strings"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/server"
 	"github.com/joho/godotenv"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"net"
-	"strings"
 
 	"github.com/naskids/nas-mall/app/user/biz/dal"
 	"github.com/naskids/nas-mall/app/user/conf"

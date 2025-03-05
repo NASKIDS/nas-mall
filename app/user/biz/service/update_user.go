@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
+
 	"github.com/cloudwego/kitex/pkg/klog"
+
 	"github.com/naskids/nas-mall/app/user/biz/model"
 	user "github.com/naskids/nas-mall/rpc_gen/kitex_gen/user"
 
-	"github.com/naskids/nas-mall/app/user/biz/dal/mysql"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/naskids/nas-mall/app/user/biz/dal/mysql"
 )
 
 type UpdateUserService struct {
