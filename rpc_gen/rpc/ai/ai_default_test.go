@@ -2,6 +2,9 @@ package ai
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"io"
 	"testing"
 
 	"github.com/cloudwego/kitex/client"
@@ -39,7 +42,13 @@ func TestSimulateAutoOrder(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotStream, _ := SimulateAutoOrder(tt.args.ctx, tt.args.Req, tt.args.callOptions...)
-			t.Log(gotStream)
+			for {
+				res, err := gotStream.Recv()
+				if errors.Is(err, io.EOF) {
+					break
+				}
+				fmt.Println(res)
+			}
 		})
 	}
 }
