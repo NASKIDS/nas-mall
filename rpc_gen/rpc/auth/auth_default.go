@@ -2,8 +2,10 @@ package auth
 
 import (
 	"context"
+
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
+
 	auth "github.com/naskids/nas-mall/rpc_gen/kitex_gen/auth"
 )
 

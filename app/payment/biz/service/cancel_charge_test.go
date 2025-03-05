@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"testing"
+
 	payment "github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
 )
 

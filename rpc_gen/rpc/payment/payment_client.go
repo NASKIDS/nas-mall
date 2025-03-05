@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
+
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment/paymentservice"
 )
 

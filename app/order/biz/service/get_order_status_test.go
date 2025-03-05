@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"testing"
+
 	order "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
 )
 

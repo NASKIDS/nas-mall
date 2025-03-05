@@ -29,7 +29,7 @@ func TestSimulateAutoOrder(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				Req: &ai.SimulateAutoOrderRequest{
-					UserMessage: "hello",
+					UserMessage: "我想给我自己买几件衣服",
 				},
 			},
 			wantStream: nil,
