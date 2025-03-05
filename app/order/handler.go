@@ -71,10 +71,3 @@ func (s *OrderServiceImpl) GetOrderByID(ctx context.Context, req *order.GetOrder
 
 	return resp, err
 }
-
-// ScheduledOrderCancel implements the OrderServiceImpl interface.
-func (s *OrderServiceImpl) ScheduledOrderCancel(ctx context.Context, req *order.ScheduledOrderCancelReq) (resp *order.ScheduledOrderCancelResp, err error) {
-	resp, err = service.NewScheduledOrderCancelService(ctx).Run(req)
-
-	return resp, err
-}

@@ -8,9 +8,8 @@ import (
 
 	"github.com/nats-io/nats.go"
 
-	"github.com/naskids/nas-mall/app/payment/biz/dal/redis"
-	"github.com/naskids/nas-mall/app/payment/infra/rpc"
-	orderClient "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
+	"github.com/naskids/nas-mall/app/payment/biz/service"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
 )
 
 const (
@@ -66,9 +65,11 @@ func handlePaymentCancelMessage(msg *nats.Msg) {
 		msg.NakWithDelay(time.Second * 60)
 		return
 	}
-
-	// 处理订单取消
-	if err := processPaymentCancel(cancelMsg); err != nil {
+	cancelChargeResp, err := service.NewCancelChargeService(context.Background()).Run(&payment.CancelChargeReq{
+		OrderId: cancelMsg.OrderID,
+		UserId:  cancelMsg.UserID,
+	})
+	if err != nil || !cancelChargeResp.Success {
 		log.Printf("处理支付[%s]取消失败: %v", cancelMsg.OrderID, err)
 		// 处理失败，稍后重试
 		msg.NakWithDelay(time.Second * 5)
@@ -79,52 +80,4 @@ func handlePaymentCancelMessage(msg *nats.Msg) {
 	if err := msg.Ack(); err != nil {
 		log.Printf("确认消息失败: %v", err)
 	}
-}
-
-// 处理订单取消逻辑
-func processPaymentCancel(cancelMsg PaymentCancelMessage) error {
-	ctx := context.Background()
-
-	// 获取分布式锁，防止重复处理
-	lockKey := PaymentCancelLockPrefix + cancelMsg.OrderID
-	locked, err := redis.RedisClient.SetNX(ctx, lockKey, time.Now().String(), LockExpiration).Result()
-	if err != nil {
-		return err
-	}
-
-	if !locked {
-		log.Printf("支付[%s]正在被其他实例处理", cancelMsg.OrderID)
-		return nil // 其他实例正在处理，视为成功
-	}
-
-	// 确保锁释放
-	defer redis.RedisClient.Del(ctx, lockKey)
-
-	// 查询订单
-	order, err := rpc.OrderClient.GetOrderStatus(ctx, &orderClient.GetOrderStatusReq{
-		UserId:  cancelMsg.UserID,
-		OrderId: cancelMsg.OrderID,
-	})
-	if err != nil {
-		return err
-	}
-
-	// 检查订单状态，只有未支付的订单才能取消
-	if order.Status != "placed" {
-		log.Printf("订单[%s]当前状态为[%s]，无需取消", cancelMsg.OrderID, order.Status)
-		return nil // 非未支付状态，无需取消，视为成功
-	}
-
-	// 执行订单取消操作
-	_, err = rpc.OrderClient.MarkOrderCanceled(ctx, &orderClient.MarkOrderCanceledReq{
-		UserId:  cancelMsg.UserID,
-		OrderId: cancelMsg.OrderID,
-	})
-	if err != nil {
-		return err
-	}
-
-	log.Printf("订单[%s]已成功取消，创建时间: %d, 过期时间: %d",
-		cancelMsg.OrderID, cancelMsg.CreateTime, cancelMsg.ExpireTime)
-	return nil
 }

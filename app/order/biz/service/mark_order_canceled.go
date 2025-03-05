@@ -17,12 +17,18 @@ package service
 import (
 	"context"
 	"fmt"
-
-	"github.com/cloudwego/kitex/pkg/klog"
+	"log"
+	"time"
 
 	"github.com/naskids/nas-mall/app/order/biz/dal/mysql"
 	"github.com/naskids/nas-mall/app/order/biz/model"
 	order "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
+)
+
+const (
+	// 锁前缀和过期时间
+	OrderCancelLockPrefix = "lock:order:cancel:"
+	LockExpiration        = 10 * time.Second
 )
 
 type MarkOrderCanceledService struct {
@@ -41,16 +47,24 @@ func (s *MarkOrderCanceledService) Run(req *order.MarkOrderCanceledReq) (resp *o
 		err = fmt.Errorf("user_id or order_id can not be empty")
 		return
 	}
-	_, err = model.GetOrder(mysql.DB, s.ctx, req.UserId, req.OrderId)
+
+	orderResult, err := model.GetOrder(mysql.DB, s.ctx, req.UserId, req.OrderId)
 	if err != nil {
-		klog.Errorf("model.ListOrder.err:%v", err)
 		return nil, err
 	}
+
+	// 检查订单状态，只有未支付的订单才能取消
+	if orderResult.OrderState != model.OrderStatePlaced {
+		log.Printf("订单[%s]当前状态为[%s]，无需取消", req.OrderId, orderResult.OrderState)
+		return &order.MarkOrderCanceledResp{}, nil // 非未支付状态，无需取消，视为成功
+	}
+
 	err = model.UpdateOrderState(mysql.DB, s.ctx, req.UserId, req.OrderId, model.OrderStateCanceled)
 	if err != nil {
-		klog.Errorf("model.ListOrder.err:%v", err)
+
 		return nil, err
 	}
+	log.Printf("订单[%s]已成功取消", req.OrderId)
 	resp = &order.MarkOrderCanceledResp{}
 	return
-} 
+}

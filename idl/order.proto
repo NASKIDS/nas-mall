@@ -14,7 +14,6 @@ service OrderService {
   rpc DeleteOrder(DeleteOrderReq) returns (DeleteOrderResp) {}
   rpc GetOrderByID(GetOrderReq) returns (GetOrderResp){}
   rpc GetOrderStatus(GetOrderStatusReq) returns (GetOrderStatusResp){}
-  rpc ScheduledOrderCancel(ScheduledOrderCancelReq) returns (ScheduledOrderCancelResp){}
 }
 
 message Address {
@@ -103,9 +102,3 @@ message GetOrderStatusResp {
   string order_id = 2;
   string status = 3;
 }
-message ScheduledOrderCancelReq {
-  uint64 user_id = 1;
-  string order_id = 2;
-  int64 scheduled_time = 3;
-}
-message ScheduledOrderCancelResp {}

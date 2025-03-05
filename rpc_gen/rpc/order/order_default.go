@@ -69,12 +69,3 @@ func GetOrderStatus(ctx context.Context, req *order.GetOrderStatusReq, callOptio
 	}
 	return resp, nil
 }
-
-func ScheduledOrderCancel(ctx context.Context, req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (resp *order.ScheduledOrderCancelResp, err error) {
-	resp, err = defaultClient.ScheduledOrderCancel(ctx, req, callOptions...)
-	if err != nil {
-		klog.CtxErrorf(ctx, "ScheduledOrderCancel call failed,err =%+v", err)
-		return nil, err
-	}
-	return resp, nil
-}

@@ -2,15 +2,14 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
-	"github.com/redis/go-redis/v9"
 
-	redisClient "github.com/naskids/nas-mall/app/payment/biz/dal/redis"
+	"github.com/naskids/nas-mall/app/payment/biz/dal/redis"
 	"github.com/naskids/nas-mall/app/payment/infra/rpc"
-	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
+	orderClient "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
 	payment "github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
 )
 
@@ -20,6 +19,11 @@ type CancelChargeService struct {
 func NewCancelChargeService(ctx context.Context) *CancelChargeService {
 	return &CancelChargeService{ctx: ctx}
 }
+
+const (
+	PaymentCancelLockPrefix = "lock:order:cancel:"
+	LockExpiration          = 10 * time.Second
+)
 
 // Run 取消订单
 func (s *CancelChargeService) Run(req *payment.CancelChargeReq) (resp *payment.CancelChargeResp, err error) {
@@ -31,46 +35,45 @@ func (s *CancelChargeService) Run(req *payment.CancelChargeReq) (resp *payment.C
 		return nil, kerrors.NewBizStatusError(400, "用户ID不能为空")
 	}
 
-	// 构建Redis锁的key
-	lockKey := fmt.Sprintf("payment:cancel:lock:%s", req.OrderId)
-	// 尝试获取锁，过期时间10秒
-	success, err := redisClient.RedisClient.SetNX(s.ctx, lockKey, "1", 10*time.Second).Result()
+	lockKey := PaymentCancelLockPrefix + req.OrderId
+	locked, err := redis.RedisClient.SetNX(s.ctx, lockKey, time.Now().String(), LockExpiration).Result()
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(500, "获取锁失败: "+err.Error())
-	}
-	if !success {
-		return nil, kerrors.NewBizStatusError(429, "操作太频繁，请稍后再试")
+		return nil, err
 	}
 
-	// 确保锁会被释放
-	defer redisClient.RedisClient.Del(s.ctx, lockKey)
+	if !locked {
+		log.Printf("支付[%s]正在被其他实例处理", req.OrderId)
+		return &payment.CancelChargeResp{Success: true}, nil // 其他实例正在处理，视为成功
+	}
 
-	//查询订单
-	orderResp, err := rpc.OrderClient.GetOrderStatus(s.ctx, &order.GetOrderStatusReq{
+	// 确保锁释放
+	defer redis.RedisClient.Del(s.ctx, lockKey)
+
+	// 查询订单
+	order, err := rpc.OrderClient.GetOrderStatus(s.ctx, &orderClient.GetOrderStatusReq{
 		UserId:  req.UserId,
 		OrderId: req.OrderId,
 	})
 	if err != nil {
-		if err == redis.Nil || err.Error() == "record not found" {
-			return nil, kerrors.NewBizStatusError(404, "订单不存在")
-		}
-		return nil, kerrors.NewBizStatusError(500, "查询订单失败: "+err.Error())
+		return nil, err
 	}
 
-	// 检查订单状态
-	if orderResp.Status == "paid" {
-		// 已支付的订单不能取消
-		return &payment.CancelChargeResp{Success: false}, nil
+	// 检查订单状态，只有未支付的订单才能取消
+	if order.Status != "placed" {
+		log.Printf("订单[%s]当前状态为[%s]，无需取消", req.OrderId, order.Status)
+		return &payment.CancelChargeResp{Success: true}, nil // 非未支付状态，无需取消，视为成功
 	}
 
-	// 更新订单状态为已取消
-	_, err = rpc.OrderClient.MarkOrderCanceled(s.ctx, &order.MarkOrderCanceledReq{
+	// 执行订单取消操作
+	_, err = rpc.OrderClient.MarkOrderCanceled(s.ctx, &orderClient.MarkOrderCanceledReq{
 		UserId:  req.UserId,
 		OrderId: req.OrderId,
 	})
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(500, "取消订单失败: "+err.Error())
+		return &payment.CancelChargeResp{Success: false}, err
 	}
+
+	log.Printf("订单[%s]已成功取消", req.OrderId)
 
 	return &payment.CancelChargeResp{Success: true}, nil
 }

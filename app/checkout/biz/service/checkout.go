@@ -31,10 +31,12 @@ import (
 	"github.com/naskids/nas-mall/app/checkout/biz/dal/redis"
 	"github.com/naskids/nas-mall/app/checkout/infra/mq"
 	"github.com/naskids/nas-mall/app/checkout/infra/rpc"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/cart"
 	checkout "github.com/naskids/nas-mall/rpc_gen/kitex_gen/checkout"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/email"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
 	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/payment"
+	"github.com/naskids/nas-mall/rpc_gen/kitex_gen/product"
 )
 
 type CheckoutService struct {
@@ -65,38 +67,38 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	// Finish your business logic.
 	// Idempotent
 	// get cart
-	// cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: req.UserId})
-	// if err != nil {
-	// 	klog.Error(err)
-	// 	err = fmt.Errorf("GetCart.err:%v", err)
-	// 	return
-	// }
-	// if cartResult == nil || cartResult.Cart == nil || len(cartResult.Cart.Items) == 0 {
-	// 	err = errors.New("cart is empty")
-	// 	return
-	// }
+	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: req.UserId})
+	if err != nil {
+		klog.Error(err)
+		err = fmt.Errorf("GetCart.err:%v", err)
+		return
+	}
+	if cartResult == nil || cartResult.Cart == nil || len(cartResult.Cart.Items) == 0 {
+		err = errors.New("cart is empty")
+		return
+	}
 	var (
 		oi    []*order.OrderItem
 		total float32
 	)
-	// for _, cartItem := range cartResult.Cart.Items {
-	// 	productResp, resultErr := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Id: cartItem.ProductId})
-	// 	if resultErr != nil {
-	// 		klog.Error(resultErr)
-	// 		err = resultErr
-	// 		return
-	// 	}
-	// 	if productResp.Product == nil {
-	// 		continue
-	// 	}
-	// 	p := productResp.Product
-	// 	cost := p.Price * float32(cartItem.Quantity)
-	// 	total += cost
-	// 	oi = append(oi, &order.OrderItem{
-	// 		Item: &cart.CartItem{ProductId: cartItem.ProductId, Quantity: cartItem.Quantity},
-	// 		Cost: cost,
-	// 	})
-	// }
+	for _, cartItem := range cartResult.Cart.Items {
+		productResp, resultErr := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Id: cartItem.ProductId})
+		if resultErr != nil {
+			klog.Error(resultErr)
+			err = resultErr
+			return
+		}
+		if productResp.Product == nil {
+			continue
+		}
+		p := productResp.Product
+		cost := p.Price * float32(cartItem.Quantity)
+		total += cost
+		oi = append(oi, &order.OrderItem{
+			Item: &cart.CartItem{ProductId: cartItem.ProductId, Quantity: cartItem.Quantity},
+			Cost: cost,
+		})
+	}
 	// create order
 	orderReq := &order.PlaceOrderReq{
 		UserId:       req.UserId,
@@ -152,7 +154,6 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	}
 	mq.PublishPaymentCancelMessage(orderId, req.UserId, 120)
 	paymentResult, err := rpc.PaymentClient.Charge(s.ctx, payReq)
-	fmt.Printf("paymentResult:%v, %v", paymentResult, err)
 	if err != nil {
 		err = fmt.Errorf("charge.err:%v", err)
 		return
@@ -171,6 +172,17 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 
 	// 确保锁释放
 	defer redis.RedisClient.Del(s.ctx, lockKey)
+
+	orderStatus, err := rpc.OrderClient.GetOrderStatus(s.ctx, &order.GetOrderStatusReq{
+		UserId:  req.UserId,
+		OrderId: orderId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if orderStatus.Status != "placed" {
+		return nil, errors.New("order is canceled")
+	}
 	rpc.PaymentClient.CreatePaymentLog(s.ctx, &payment.CreatePaymentLogReq{
 		UserId:        req.UserId,
 		OrderId:       orderId,

@@ -18,7 +18,6 @@ type Client interface {
 	DeleteOrder(ctx context.Context, Req *order.DeleteOrderReq, callOptions ...callopt.Option) (r *order.DeleteOrderResp, err error)
 	GetOrderByID(ctx context.Context, Req *order.GetOrderReq, callOptions ...callopt.Option) (r *order.GetOrderResp, err error)
 	GetOrderStatus(ctx context.Context, Req *order.GetOrderStatusReq, callOptions ...callopt.Option) (r *order.GetOrderStatusResp, err error)
-	ScheduledOrderCancel(ctx context.Context, Req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (r *order.ScheduledOrderCancelResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -83,9 +82,4 @@ func (p *kOrderServiceClient) GetOrderByID(ctx context.Context, Req *order.GetOr
 func (p *kOrderServiceClient) GetOrderStatus(ctx context.Context, Req *order.GetOrderStatusReq, callOptions ...callopt.Option) (r *order.GetOrderStatusResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetOrderStatus(ctx, Req)
-}
-
-func (p *kOrderServiceClient) ScheduledOrderCancel(ctx context.Context, Req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (r *order.ScheduledOrderCancelResp, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ScheduledOrderCancel(ctx, Req)
 }

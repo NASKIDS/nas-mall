@@ -16,6 +16,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -35,10 +36,10 @@ func NewPlaceOrderService(ctx context.Context) *PlaceOrderService {
 // Run create note info
 func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrderResp, err error) {
 	// Finish your business logic.
-	// if len(req.OrderItems) == 0 {
-	// 	err = fmt.Errorf("OrderItems empty")
-	// 	return
-	// }
+	if len(req.OrderItems) == 0 {
+		err = fmt.Errorf("OrderItems empty")
+		return
+	}
 
 	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
 		orderId, _ := uuid.NewUUID()
@@ -64,20 +65,14 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 		}
 
 		var itemList []*model.OrderItem
-		// for _, v := range req.OrderItems {
-		// 	itemList = append(itemList, &model.OrderItem{
-		// 		OrderIdRefer: o.OrderId,
-		// 		ProductId:    v.Item.ProductId,
-		// 		Quantity:     v.Item.Quantity,
-		// 		Cost:         v.Cost,
-		// 	})
-		// }
-		itemList = append(itemList, &model.OrderItem{
-			OrderIdRefer: o.OrderId,
-			ProductId:    1,
-			Quantity:     1,
-			Cost:         100,
-		})
+		for _, v := range req.OrderItems {
+			itemList = append(itemList, &model.OrderItem{
+				OrderIdRefer: o.OrderId,
+				ProductId:    v.Item.ProductId,
+				Quantity:     v.Item.Quantity,
+				Cost:         v.Cost,
+			})
+		}
 		if err := tx.Create(&itemList).Error; err != nil {
 			return err
 		}
