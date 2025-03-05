@@ -16,7 +16,10 @@ registry:
 
 mysql:
   dsn: "%s:%s@tcp(%s:3306)/user?charset=utf8mb4&parseTime=True&loc=Local"
-
+#  MySQL:
+#    DSN: "%s:%s@tcp(%s:3306)/user?charset=utf8mb4&parseTime=True&loc=Local"
+#    # 明确3个占位符对应 [用户名]:[密码]@tcp([主机]:3306)
+#  dsn: "%s:%s@tcp(host.docker.internal:3306)/user?charset=utf8mb4&parseTime=True&loc=Local"
 redis:
   address: "127.0.0.1:6379"
   username: ""
