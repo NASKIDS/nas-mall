@@ -44,3 +44,37 @@ func (s *OrderServiceImpl) MarkOrderPaid(ctx context.Context, req *order.MarkOrd
 
 	return resp, err
 }
+
+// MarkOrderCanceled implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) MarkOrderCanceled(ctx context.Context, req *order.MarkOrderCanceledReq) (resp *order.MarkOrderCanceledResp, err error) {
+	resp, err = service.NewMarkOrderCanceledService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DeleteOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) DeleteOrder(ctx context.Context, req *order.DeleteOrderReq) (resp *order.DeleteOrderResp, err error) {
+	resp, err = service.NewDeleteOrderService(ctx).Run(req)
+	return resp, err
+}
+
+// GetOrderStatus implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) GetOrderStatus(ctx context.Context, req *order.GetOrderStatusReq) (resp *order.GetOrderStatusResp, err error) {
+	resp, err = service.NewGetOrderStatusService(ctx).Run(req)
+
+	return resp, err
+}
+
+// GetOrderByID implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) GetOrderByID(ctx context.Context, req *order.GetOrderReq) (resp *order.GetOrderResp, err error) {
+	resp, err = service.NewGetOrderByIDService(ctx).Run(req)
+
+	return resp, err
+}
+
+// ScheduledOrderCancel implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) ScheduledOrderCancel(ctx context.Context, req *order.ScheduledOrderCancelReq) (resp *order.ScheduledOrderCancelResp, err error) {
+	resp, err = service.NewScheduledOrderCancelService(ctx).Run(req)
+
+	return resp, err
+}

@@ -14,6 +14,11 @@ type Client interface {
 	PlaceOrder(ctx context.Context, Req *order.PlaceOrderReq, callOptions ...callopt.Option) (r *order.PlaceOrderResp, err error)
 	ListOrder(ctx context.Context, Req *order.ListOrderReq, callOptions ...callopt.Option) (r *order.ListOrderResp, err error)
 	MarkOrderPaid(ctx context.Context, Req *order.MarkOrderPaidReq, callOptions ...callopt.Option) (r *order.MarkOrderPaidResp, err error)
+	MarkOrderCanceled(ctx context.Context, Req *order.MarkOrderCanceledReq, callOptions ...callopt.Option) (r *order.MarkOrderCanceledResp, err error)
+	DeleteOrder(ctx context.Context, Req *order.DeleteOrderReq, callOptions ...callopt.Option) (r *order.DeleteOrderResp, err error)
+	GetOrderByID(ctx context.Context, Req *order.GetOrderReq, callOptions ...callopt.Option) (r *order.GetOrderResp, err error)
+	GetOrderStatus(ctx context.Context, Req *order.GetOrderStatusReq, callOptions ...callopt.Option) (r *order.GetOrderStatusResp, err error)
+	ScheduledOrderCancel(ctx context.Context, Req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (r *order.ScheduledOrderCancelResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -58,4 +63,29 @@ func (p *kOrderServiceClient) ListOrder(ctx context.Context, Req *order.ListOrde
 func (p *kOrderServiceClient) MarkOrderPaid(ctx context.Context, Req *order.MarkOrderPaidReq, callOptions ...callopt.Option) (r *order.MarkOrderPaidResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MarkOrderPaid(ctx, Req)
+}
+
+func (p *kOrderServiceClient) MarkOrderCanceled(ctx context.Context, Req *order.MarkOrderCanceledReq, callOptions ...callopt.Option) (r *order.MarkOrderCanceledResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MarkOrderCanceled(ctx, Req)
+}
+
+func (p *kOrderServiceClient) DeleteOrder(ctx context.Context, Req *order.DeleteOrderReq, callOptions ...callopt.Option) (r *order.DeleteOrderResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOrder(ctx, Req)
+}
+
+func (p *kOrderServiceClient) GetOrderByID(ctx context.Context, Req *order.GetOrderReq, callOptions ...callopt.Option) (r *order.GetOrderResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOrderByID(ctx, Req)
+}
+
+func (p *kOrderServiceClient) GetOrderStatus(ctx context.Context, Req *order.GetOrderStatusReq, callOptions ...callopt.Option) (r *order.GetOrderStatusResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOrderStatus(ctx, Req)
+}
+
+func (p *kOrderServiceClient) ScheduledOrderCancel(ctx context.Context, Req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (r *order.ScheduledOrderCancelResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ScheduledOrderCancel(ctx, Req)
 }

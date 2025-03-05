@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
-	dns "github.com/kitex-contrib/resolver-dns"
 )
 
 var (
@@ -21,7 +20,7 @@ func init() {
 
 func DefaultClient() RPCClient {
 	once.Do(func() {
-		defaultClientOpts = append(defaultClientOpts, client.WithResolver(dns.NewDNSResolver()))
+		defaultClientOpts = append(defaultClientOpts, client.WithHostPorts("10.1.2.133:8885"))
 		defaultClient = newClient(defaultDstService, defaultClientOpts...)
 	})
 	return defaultClient

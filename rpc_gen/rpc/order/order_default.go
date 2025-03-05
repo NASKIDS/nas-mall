@@ -2,11 +2,9 @@ package order
 
 import (
 	"context"
-
+	order "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
-
-	order "github.com/naskids/nas-mall/rpc_gen/kitex_gen/order"
 )
 
 func PlaceOrder(ctx context.Context, req *order.PlaceOrderReq, callOptions ...callopt.Option) (resp *order.PlaceOrderResp, err error) {
@@ -31,6 +29,51 @@ func MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidReq, callOptions
 	resp, err = defaultClient.MarkOrderPaid(ctx, req, callOptions...)
 	if err != nil {
 		klog.CtxErrorf(ctx, "MarkOrderPaid call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func MarkOrderCanceled(ctx context.Context, req *order.MarkOrderCanceledReq, callOptions ...callopt.Option) (resp *order.MarkOrderCanceledResp, err error) {
+	resp, err = defaultClient.MarkOrderCanceled(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "MarkOrderCanceled call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func DeleteOrder(ctx context.Context, req *order.DeleteOrderReq, callOptions ...callopt.Option) (resp *order.DeleteOrderResp, err error) {
+	resp, err = defaultClient.DeleteOrder(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "DeleteOrder call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetOrderByID(ctx context.Context, req *order.GetOrderReq, callOptions ...callopt.Option) (resp *order.GetOrderResp, err error) {
+	resp, err = defaultClient.GetOrderByID(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "GetOrderByID call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetOrderStatus(ctx context.Context, req *order.GetOrderStatusReq, callOptions ...callopt.Option) (resp *order.GetOrderStatusResp, err error) {
+	resp, err = defaultClient.GetOrderStatus(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "GetOrderStatus call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func ScheduledOrderCancel(ctx context.Context, req *order.ScheduledOrderCancelReq, callOptions ...callopt.Option) (resp *order.ScheduledOrderCancelResp, err error) {
+	resp, err = defaultClient.ScheduledOrderCancel(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "ScheduledOrderCancel call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

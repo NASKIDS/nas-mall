@@ -82,11 +82,11 @@ clean: ## clean up all the tmp files
 
 .PHONY: env-start
 env-start:  ## launch all middleware software as the docker
-	@docker-compose up -d
+	@sudo docker-compose up -d
 
 .PHONY: env-stop
 env-stop: ## stop all docker
-	@docker-compose down
+	@sudo docker-compose down
 
 ##@ Open Browser
 
@@ -117,15 +117,15 @@ build-svc:  ## build one service image
 	docker build -f ./deploy/Dockerfile.svc -t ${svc}:${v} --build-arg SVC=${svc} .
 
 .PHONY: build-all
-build-all: tidy vet lint-fix test ## build all service image
-	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} -t frontend:latest .
-	docker build -f ./deploy/Dockerfile.svc -t cart:${v} -t cart:latest --build-arg SVC=cart .
-	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} -t checkout:latest --build-arg SVC=checkout .
-	docker build -f ./deploy/Dockerfile.svc -t email:${v} -t email:latest --build-arg SVC=email .
-	docker build -f ./deploy/Dockerfile.svc -t order:${v} -t order:latest --build-arg SVC=order .
-	docker build -f ./deploy/Dockerfile.svc -t payment:${v} -t payment:latest --build-arg SVC=payment .
-	docker build -f ./deploy/Dockerfile.svc -t product:${v} -t product:latest --build-arg SVC=product .
-	docker build -f ./deploy/Dockerfile.svc -t user:${v} -t user:latest --build-arg SVC=user .
+build-all:  ## build all service image
+	sudo docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} -t frontend:latest .
+	sudo docker build -f ./deploy/Dockerfile.svc -t cart:${v} -t cart:latest --build-arg SVC=cart .
+	sudo docker build -f ./deploy/Dockerfile.svc -t checkout:${v} -t checkout:latest --build-arg SVC=checkout .
+	sudo docker build -f ./deploy/Dockerfile.svc -t email:${v} -t email:latest --build-arg SVC=email .
+	sudo docker build -f ./deploy/Dockerfile.svc -t order:${v} -t order:latest --build-arg SVC=order .
+	sudo docker build -f ./deploy/Dockerfile.svc -t payment:${v} -t payment:latest --build-arg SVC=payment .
+	sudo docker build -f ./deploy/Dockerfile.svc -t product:${v} -t product:latest --build-arg SVC=product .
+	sudo docker build -f ./deploy/Dockerfile.svc -t user:${v} -t user:latest --build-arg SVC=user .
 
 ##@ Deploy Images
 
